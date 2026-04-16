@@ -1,0 +1,251 @@
+/* =============================================
+   CLOCKWATCH - Animations & Transitions
+   ============================================= */
+
+/* ========== Fade In Variants ========== */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInLeft {
+    from { opacity: 0; transform: translateX(-30px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeInRight {
+    from { opacity: 0; transform: translateX(30px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeInScale {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* ========== Pulse ========== */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+@keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 0 5px rgba(229, 9, 20, 0.3); }
+    50% { box-shadow: 0 0 20px rgba(229, 9, 20, 0.6); }
+}
+
+/* ========== Slide In ========== */
+@keyframes slideInFromRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideInFromLeft {
+    from { transform: translateX(-100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideInFromBottom {
+    from { transform: translateY(100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* ========== Scale ========== */
+@keyframes scaleIn {
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes bounceIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    60% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); }
+}
+
+/* ========== Float ========== */
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+/* ========== Card Hover Glow ========== */
+.content-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-md);
+    border: 2px solid transparent;
+    transition: border-color var(--transition-normal);
+    pointer-events: none;
+}
+
+.content-card:hover::after {
+    border-color: rgba(229, 9, 20, 0.3);
+}
+
+/* ========== Page Transition ========== */
+.page-content {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* ========== Hero Carousel Transitions ========== */
+.hero-slide-enter {
+    animation: fadeIn 1s ease-out;
+}
+
+/* ========== Stagger Animation for Grid ========== */
+.content-grid .content-card {
+    opacity: 0;
+    animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.content-grid .content-card:nth-child(1) { animation-delay: 0.05s; }
+.content-grid .content-card:nth-child(2) { animation-delay: 0.1s; }
+.content-grid .content-card:nth-child(3) { animation-delay: 0.15s; }
+.content-grid .content-card:nth-child(4) { animation-delay: 0.2s; }
+.content-grid .content-card:nth-child(5) { animation-delay: 0.25s; }
+.content-grid .content-card:nth-child(6) { animation-delay: 0.3s; }
+.content-grid .content-card:nth-child(7) { animation-delay: 0.35s; }
+.content-grid .content-card:nth-child(8) { animation-delay: 0.4s; }
+.content-grid .content-card:nth-child(9) { animation-delay: 0.45s; }
+.content-grid .content-card:nth-child(10) { animation-delay: 0.5s; }
+.content-grid .content-card:nth-child(11) { animation-delay: 0.55s; }
+.content-grid .content-card:nth-child(12) { animation-delay: 0.6s; }
+.content-grid .content-card:nth-child(n+13) { animation-delay: 0.65s; }
+
+/* ========== Skeleton Card in Grid ========== */
+.content-grid .skeleton-card {
+    animation: pulse 1.8s ease-in-out infinite;
+}
+
+/* ========== Logo Animation ========== */
+.nav-logo:hover .logo-text {
+    text-shadow: 0 0 30px rgba(229, 9, 20, 0.7), 0 0 60px rgba(229, 9, 20, 0.3);
+}
+
+.nav-logo:hover .logo-icon {
+    animation: float 1.5s ease-in-out infinite;
+}
+
+/* ========== Button Ripple ========== */
+.btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn:active::after {
+    width: 300px;
+    height: 300px;
+}
+
+/* ========== Row Arrow Hover ========== */
+.row-arrow:active {
+    transform: scale(0.9);
+}
+
+/* ========== Filter Chip Transition ========== */
+.filter-chip {
+    position: relative;
+    overflow: hidden;
+}
+
+.filter-chip::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.05));
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+}
+
+.filter-chip:hover::before {
+    opacity: 1;
+}
+
+/* ========== Detail Page Animations ========== */
+.detail-info {
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.detail-poster {
+    animation: fadeInLeft 0.8s ease-out;
+}
+
+.detail-section {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.6s ease;
+}
+
+.detail-section.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ========== Cast Card Hover ========== */
+.cast-card {
+    transition: transform var(--transition-fast);
+}
+
+.cast-card:hover {
+    transform: translateY(-5px);
+}
+
+/* ========== Bookmark Heart Animation ========== */
+.card-bookmark.bookmarked {
+    animation: bounceIn 0.4s ease;
+}
+
+/* ========== Hero Auto-rotate Indicator ========== */
+.hero-indicators {
+    position: absolute;
+    bottom: 30px;
+    right: var(--content-padding);
+    display: flex;
+    gap: 8px;
+    z-index: 5;
+}
+
+.hero-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.hero-dot.active {
+    background: var(--color-primary);
+    width: 28px;
+    border-radius: 5px;
+}
+
+/* ========== Loading State Text ========== */
+.loading-text {
+    animation: pulse 1.5s ease-in-out infinite;
+    color: var(--color-text-muted);
+    text-align: center;
+    padding: 20px;
+}

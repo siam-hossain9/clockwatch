@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Browse and discover popular, top-rated, and genre-specific movies on WASUSANOCH.">
+    <meta property="og:title" content="Movies - WASUSANOCH">
+    <meta property="og:description" content="Explore thousands of movies across all genres on WASUSANOCH.">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#E50914">
+    <title>Movies - WASUSANOCH</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' font-family='Arial'>W</text></svg>">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <nav id="main-nav" aria-label="Main navigation"></nav>
+
+    <main class="page-content">
+        <section class="hero" id="hero" aria-label="Featured movie">
+            <div class="hero-backdrop" style="background:var(--bg-primary)"></div>
+            <div class="hero-gradient"></div>
+        </section>
+
+        <div class="page-header">
+            <h1 class="page-title">Movies</h1>
+            <div class="filter-bar" id="filterBar">
+                <select class="filter-select" id="genreFilter" aria-label="Filter by genre">
+                    <option value="">All Genres</option>
+                </select>
+                <select class="filter-select" id="sortFilter" aria-label="Sort by">
+                    <option value="popularity.desc">Popular</option>
+                    <option value="vote_average.desc">Top Rated</option>
+                    <option value="release_date.desc">Latest</option>
+                    <option value="revenue.desc">Revenue</option>
+                </select>
+                <select class="filter-select" id="yearFilter" aria-label="Filter by year">
+                    <option value="">All Years</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="content-grid" id="moviesGrid">
+            <!-- Cards loaded by JS -->
+        </div>
+
+        <div class="load-more-container" id="loadMoreContainer">
+            <button class="btn btn-outline" id="loadMoreBtn">Load More</button>
+        </div>
+    </main>
+
+    <footer id="main-footer" aria-label="Footer"></footer>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/mylist.js"></script>
+    <script src="js/ui.js"></script>
+    <script>
+    const MoviesPage = (() => {
+        let currentPage = 1;
+        let isLoading = false;
+        let currentGenre = '';
+        let currentSort = 'popularity.desc';
+        let currentYear = '';
+
+        async function init() {
+            UI.renderNav('movies');
+            UI.renderFooter();
+            UI.initBackToTop();
+
+            await loadHero();
+            populateFilters();
+            loadMovies(true);
+
+            document.getElementById('genreFilter')?.addEventListener('change', () => { currentGenre = document.getElementById('genreFilter').value; currentPage = 1; loadMovies(true); });
+            document.getElementById('sortFilter')?.addEventListener('change', () => { currentSort = document.getElementById('sortFilter').value; currentPage = 1; loadMovies(true); });
+            document.getElementById('yearFilter')?.addEventListener('change', () => { currentYear = document.getElementById('yearFilter').value; currentPage = 1; loadMovies(true); });
+            document.getElementById('loadMoreBtn')?.addEventListener('click', () => { currentPage++; loadMovies(false); });
+        }
+
+        async function loadHero() {
+            try {
+                const data = await API.TMDB.popularMovies();
+                const items = data.results?.filter(m => m.backdrop_path) || [];
+                if (items.length > 0) {
+                    const random = items[Math.floor(Math.random() * Math.min(5, items.length))];
+                    UI.renderHero(document.getElementById('hero'), random, 'movie');
+                }
+            } catch {}
+        }
+
+        async function populateFilters() {
+            try {
+                const data = await API.TMDB.genreList();
+                const select = document.getElementById('genreFilter');
+                (data.genres || []).forEach(g => {
+                    const opt = document.createElement('option');
+                    opt.value = g.id;
+                    opt.textContent = g.name;
+                    select.appendChild(opt);
+                });
+            } catch {}
+
+            const yearSelect = document.getElementById('yearFilter');
+            const thisYear = new Date().getFullYear();
+            for (let y = thisYear; y >= 1970; y--) {
+                const opt = document.createElement('option');
+                opt.value = y;
+                opt.textContent = y;
+                yearSelect.appendChild(opt);
+            }
+        }
+
+        async function loadMovies(reset) {
+            if (isLoading) return;
+            isLoading = true;
+
+            const grid = document.getElementById('moviesGrid');
+            const loadBtn = document.getElementById('loadMoreBtn');
+            if (reset) grid.innerHTML = UI.generateSkeletonGrid(18);
+            else loadBtn.textContent = 'Loading...';
+
+            try {
+                const params = { sort_by: currentSort, page: currentPage };
+                if (currentGenre) params.with_genres = currentGenre;
+                if (currentYear) { params.primary_release_year = currentYear; }
+                params['vote_count.gte'] = 50;
+
+                const data = await API.TMDB.discoverMovies(params);
+                const movies = data.results || [];
+
+                if (reset) grid.innerHTML = '';
+                movies.forEach(m => grid.appendChild(UI.createMovieCard(m, 'movie')));
+
+                loadBtn.style.display = currentPage >= (data.total_pages || 1) ? 'none' : '';
+                loadBtn.textContent = 'Load More';
+            } catch (err) {
+                if (reset) UI.showError(grid, 'Failed to load movies', () => loadMovies(true));
+            }
+            isLoading = false;
+        }
+
+        return { init };
+    })();
+    document.addEventListener('DOMContentLoaded', MoviesPage.init);
+    </script>
+</body>
+</html>

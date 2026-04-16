@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Browse and discover popular, top-rated, and currently airing anime on WASUSANOCH.">
+    <meta property="og:title" content="Anime - WASUSANOCH">
+    <meta property="og:description" content="Explore thousands of anime series and movies on WASUSANOCH.">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#E50914">
+    <title>Anime - WASUSANOCH</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' font-family='Arial'>W</text></svg>">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <nav id="main-nav" aria-label="Main navigation"></nav>
+
+    <main class="page-content">
+        <section class="hero" id="hero" aria-label="Featured anime">
+            <div class="hero-backdrop" style="background:var(--bg-primary)"></div>
+            <div class="hero-gradient"></div>
+        </section>
+
+        <div class="page-header">
+            <h1 class="page-title">Anime</h1>
+            <div class="filter-bar" id="filterBar">
+                <select class="filter-select" id="categoryFilter" aria-label="Category">
+                    <option value="top">Top Anime</option>
+                    <option value="airing">Currently Airing</option>
+                    <option value="upcoming">Upcoming</option>
+                    <option value="popular">Most Popular</option>
+                    <option value="seasonal">This Season</option>
+                </select>
+                <select class="filter-select" id="genreFilter" aria-label="Filter by genre">
+                    <option value="">All Genres</option>
+                    <option value="1">Action</option>
+                    <option value="2">Adventure</option>
+                    <option value="4">Comedy</option>
+                    <option value="8">Drama</option>
+                    <option value="10">Fantasy</option>
+                    <option value="14">Horror</option>
+                    <option value="7">Mystery</option>
+                    <option value="22">Romance</option>
+                    <option value="24">Sci-Fi</option>
+                    <option value="36">Slice of Life</option>
+                    <option value="30">Sports</option>
+                    <option value="37">Supernatural</option>
+                    <option value="41">Thriller</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="content-grid" id="animeGrid">
+            <!-- Cards loaded by JS -->
+        </div>
+
+        <div class="load-more-container" id="loadMoreContainer">
+            <button class="btn btn-outline" id="loadMoreBtn">Load More</button>
+        </div>
+    </main>
+
+    <footer id="main-footer" aria-label="Footer"></footer>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/mylist.js"></script>
+    <script src="js/ui.js"></script>
+    <script>
+    const AnimePage = (() => {
+        let currentPage = 1;
+        let isLoading = false;
+        let currentCategory = 'top';
+        let currentGenre = '';
+        let hasNextPage = true;
+
+        async function init() {
+            UI.renderNav('anime');
+            UI.renderFooter();
+            UI.initBackToTop();
+
+            loadAnime(true);
+            loadHero();
+
+            document.getElementById('categoryFilter')?.addEventListener('change', () => {
+                currentCategory = document.getElementById('categoryFilter').value;
+                currentPage = 1;
+                hasNextPage = true;
+                loadAnime(true);
+            });
+            document.getElementById('genreFilter')?.addEventListener('change', () => {
+                currentGenre = document.getElementById('genreFilter').value;
+                currentPage = 1;
+                hasNextPage = true;
+                if (currentGenre) {
+                    document.getElementById('categoryFilter').value = 'top';
+                    currentCategory = 'top';
+                }
+                loadAnime(true);
+            });
+            document.getElementById('loadMoreBtn')?.addEventListener('click', () => { currentPage++; loadAnime(false); });
+        }
+
+        async function loadHero() {
+            try {
+                const data = await API.JIKAN.topAnime(1);
+                const items = data.data || [];
+                if (items.length > 0) {
+                    const random = items[Math.floor(Math.random() * Math.min(5, items.length))];
+                    UI.renderHero(document.getElementById('hero'), random, 'anime');
+                }
+            } catch {}
+        }
+
+        async function loadAnime(reset) {
+            if (isLoading) return;
+            isLoading = true;
+
+            const grid = document.getElementById('animeGrid');
+            const loadBtn = document.getElementById('loadMoreBtn');
+            if (reset) grid.innerHTML = UI.generateSkeletonGrid(18);
+            else loadBtn.textContent = 'Loading...';
+
+            try {
+                let data;
+                if (currentGenre) {
+                    data = await API.JIKAN.animeByGenre(currentGenre, currentPage);
+                } else {
+                    switch (currentCategory) {
+                        case 'airing':
+                            data = await API.JIKAN.topAnime(currentPage, 'airing');
+                            break;
+                        case 'upcoming':
+                            data = await API.JIKAN.topAnime(currentPage, 'upcoming');
+                            break;
+                        case 'popular':
+                            data = await API.JIKAN.topAnime(currentPage, 'bypopularity');
+                            break;
+                        case 'seasonal':
+                            data = await API.JIKAN.seasonNow(currentPage);
+                            break;
+                        default:
+                            data = await API.JIKAN.topAnime(currentPage);
+                    }
+                }
+
+                const items = data.data || [];
+                hasNextPage = data.pagination?.has_next_page || false;
+
+                if (reset) grid.innerHTML = '';
+                items.forEach(anime => grid.appendChild(UI.createMovieCard(anime, 'anime')));
+
+                if (reset && items.length === 0) {
+                    grid.innerHTML = '<div class="mylist-empty"><div class="mylist-empty-icon">🎌</div><h2>No anime found</h2></div>';
+                }
+
+                loadBtn.style.display = hasNextPage ? '' : 'none';
+                loadBtn.textContent = 'Load More';
+            } catch (err) {
+                console.error('Anime load error:', err);
+                if (reset) UI.showError(grid, 'Failed to load anime. Jikan API may be rate limited — try again in a moment.', () => { currentPage = 1; loadAnime(true); });
+                loadBtn.textContent = 'Load More';
+            }
+            isLoading = false;
+        }
+
+        return { init };
+    })();
+    document.addEventListener('DOMContentLoaded', AnimePage.init);
+    </script>
+</body>
+</html>

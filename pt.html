@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For You 💕</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --rose: #e8607a;
+    --blush: #f9d0da;
+    --deep: #3b0a1e;
+    --gold: #c9a96e;
+    --cream: #fff8f0;
+    --petal: #f7c5d0;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--deep);
+    color: var(--cream);
+    font-family: 'Cormorant Garamond', serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+  /* (All your original styles remain the same - I kept them untouched for beauty) */
+  .cursor { position: fixed; width: 18px; height: 18px; background: var(--rose); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); transition: transform 0.1s ease, background 0.3s; mix-blend-mode: screen; }
+  .cursor-trail { position: fixed; width: 8px; height: 8px; background: var(--petal); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%, -50%); transition: left 0.15s ease, top 0.15s ease; opacity: 0.6; }
+  .stars, .petal-container { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+  .star { position: absolute; background: white; border-radius: 50%; animation: twinkle var(--d, 3s) ease-in-out infinite; }
+  @keyframes twinkle { 0%,100% { opacity: 0.1; transform: scale(1); } 50% { opacity: 1; transform: scale(1.4); } }
+  .petal { position: absolute; top: -60px; font-size: 1.4rem; animation: fall linear infinite; opacity: 0.75; }
+  @keyframes fall { 0% { transform: translateY(-60px) rotate(0deg) translateX(0); opacity: 0.8; } 100% { transform: translateY(110vh) rotate(360deg) translateX(var(--drift, 60px)); opacity: 0; } }
+  section { position: relative; z-index: 2; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 24px; text-align: center; }
+  .hero { background: radial-gradient(ellipse at 50% 40%, #6b1535 0%, var(--deep) 70%); }
+  .hero-title { font-family: 'Playfair Display', serif; font-size: clamp(2.8rem, 9vw, 7rem); font-style: italic; line-height: 1.1; color: var(--cream); text-shadow: 0 0 40px rgba(232,96,122,0.5); animation: fadeUp 1.2s ease both; }
+  .hero-title span { color: var(--gold); }
+  .hero-sub { margin-top: 20px; font-size: clamp(1.1rem, 3vw, 1.5rem); font-style: italic; color: var(--petal); opacity: 0; animation: fadeUp 1.2s 0.5s ease forwards; letter-spacing: 0.04em; }
+  .big-heart { font-size: clamp(4rem, 15vw, 10rem); animation: heartbeat 1.5s ease-in-out infinite, fadeUp 1s 0.2s ease both; display: block; margin-bottom: 20px; filter: drop-shadow(0 0 24px rgba(232,96,122,0.7)); }
+  @keyframes heartbeat { 0%,100% { transform: scale(1); } 14% { transform: scale(1.12); } 28% { transform: scale(1); } 42% { transform: scale(1.06); } 70% { transform: scale(1); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+  .scroll-hint { margin-top: 50px; font-size: 0.9rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--rose); opacity: 0; animation: fadeUp 1s 1.4s forwards, bob 2s 2.4s ease-in-out infinite; }
+  @keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(8px)} }
+  .reasons { background: linear-gradient(180deg, var(--deep) 0%, #1e0312 100%); gap: 50px; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 5vw, 3.2rem); font-style: italic; color: var(--gold); margin-bottom: 10px; text-shadow: 0 0 20px rgba(201,169,110,0.4); }
+  .section-line { width: 80px; height: 1px; background: linear-gradient(90deg, transparent, var(--rose), transparent); margin: 0 auto 40px; }
+  .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; max-width: 1100px; width: 100%; }
+  .card { background: rgba(255,255,255,0.04); border: 1px solid rgba(232,96,122,0.2); border-radius: 20px; padding: 32px 24px; transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease; position: relative; overflow: hidden; text-align: left; }
+  .card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 20px 60px rgba(232,96,122,0.25); border-color: var(--rose); }
+  .card-icon { font-size: 2.6rem; margin-bottom: 16px; display: block; }
+  .card-title { font-family: 'Playfair Display', serif; font-size: 1.35rem; color: var(--blush); margin-bottom: 12px; }
+  .card-text { font-size: 1rem; color: #e8b0c0; line-height: 1.75; font-style: italic; }
+  .letter-section { background: radial-gradient(ellipse at 50% 60%, #3b0a1e 0%, #0d0008 100%); }
+  .envelope { max-width: 720px; width: 100%; background: rgba(255,248,240,0.05); border: 1px solid rgba(201,169,110,0.3); border-radius: 24px; padding: 50px 40px; position: relative; box-shadow: 0 0 60px rgba(232,96,122,0.08), inset 0 0 40px rgba(0,0,0,0.2); }
+  .letter-text { font-size: clamp(1.05rem, 2.5vw, 1.3rem); line-height: 1.95; color: var(--cream); font-style: italic; text-align: left; }
+  .letter-text strong { color: var(--gold); font-style: normal; }
+  .letter-sign { margin-top: 40px; text-align: right; font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--rose); font-style: italic; }
+  .final { background: linear-gradient(180deg, #0d0008 0%, #3b0a1e 100%); }
+  .sparkle-text { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 7vw, 5rem); font-style: italic; color: var(--cream); line-height: 1.3; animation: glow 3s ease-in-out infinite; }
+  @keyframes glow { 0%,100% { text-shadow: 0 0 20px rgba(232,96,122,0.3); } 50% { text-shadow: 0 0 60px rgba(232,96,122,0.8), 0 0 100px rgba(201,169,110,0.3); } }
+  .hearts-rain { font-size: 2rem; letter-spacing: 12px; animation: pulse 2s ease-in-out infinite; margin-top: 20px; display: block; color: var(--rose); }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+  .final-note { margin-top: 30px; font-size: 1.1rem; color: var(--petal); font-style: italic; max-width: 500px; line-height: 1.9; }
+  .reveal { opacity: 0; transform: translateY(50px); transition: opacity 0.8s ease, transform 0.8s ease; }
+  .reveal.visible { opacity: 1; transform: none; }
+  .orb { position: fixed; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0; animation: orbFloat ease-in-out infinite; }
+  @keyframes orbFloat { 0%,100% { transform: translate(0, 0); } 33% { transform: translate(30px, -40px); } 66% { transform: translate(-20px, 30px); } }
+</style>
+</head>
+<body>
+<!-- Custom cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-trail" id="cursorTrail"></div>
+<!-- Background orbs -->
+<div class="orb" style="width:400px;height:400px;background:rgba(232,96,122,0.12);top:10%;left:-10%;animation-duration:12s;"></div>
+<div class="orb" style="width:300px;height:300px;background:rgba(201,169,110,0.08);bottom:20%;right:-5%;animation-duration:15s;animation-delay:-5s;"></div>
+<!-- Stars -->
+<div class="stars" id="stars"></div>
+<!-- Falling petals -->
+<div class="petal-container" id="petals"></div>
+
+<!-- HERO -->
+<section class="hero">
+  <span class="big-heart">💗</span>
+  <h1 class="hero-title">You are <span>breathtaking,</span><br>my love.</h1>
+  <p class="hero-sub">A page written just for you — because words aren't enough, but I'll try.</p>
+  <p class="scroll-hint">↓ scroll to feel the love ↓</p>
+</section>
+
+<!-- REASONS (Updated Cards) -->
+<section class="reasons">
+  <div class="reveal">
+    <h2 class="section-title">Why you drive me crazy</h2>
+    <div class="section-line"></div>
+    <div class="cards-grid">
+      <div class="card">
+        <span class="card-icon">✨</span>
+        <div class="card-title">Your Smile</div>
+        <p class="card-text">"Your smile is pure sin… so soft, so tempting, it makes me want to pin you against the wall and kiss you until you’re breathless."</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌙</span>
+        <div class="card-title">Your Eyes</div>
+        <p class="card-text">"Your eyes look at me like pure temptation. Every time I stare into them, I imagine you looking up at me while I’m deep inside you."</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">💫</span>
+        <div class="card-title">Your Laugh</div>
+        <p class="card-text">"Your laugh is so fucking sexy. It makes me want to throw you on the bed and make you moan my name instead."</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌹</span>
+        <div class="card-title">Your Body</div>
+        <p class="card-text">"Your body is a masterpiece of curves — that tiny waist, those soft hips, and that perfect ass. I want to run my hands over every inch, grab you, and claim you slowly."</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌸</span>
+        <div class="card-title">Your Curves</div>
+        <p class="card-text">"Every curve of your body drives me insane. The way your waist dips into your hips… I want to grip them hard while I fuck you from behind."</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔥</span>
+        <div class="card-title">Your Touch</div>
+        <p class="card-text">"I crave your touch so badly. I want to feel your soft hands wrapped around my cock while you look at me with those hungry eyes."</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">😈</span>
+        <div class="card-title">The Way You Tease Me</div>
+        <p class="card-text">"The way you tease me is dangerous. You make me so hard that all I can think about is spreading your legs and burying myself deep inside you."</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">💖</span>
+        <div class="card-title">My Desire For You</div>
+        <p class="card-text">"I want you so intensely. I want to taste every part of you, fuck you slow and deep, then hard and rough until you’re shaking and screaming my name."</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LOVE LETTER (Updated) -->
+<section class="letter-section">
+  <div class="reveal envelope">
+    <h2 class="section-title" style="margin-bottom:8px;">A letter for you</h2>
+    <div class="section-line"></div>
+    <p class="letter-text">
+      My beautiful temptress,<br><br>
+      Every curve of your body has been haunting me — that soft, smooth waist that dips so perfectly into your wide hips, the way your tits sit so full and heavy, and that round, tempting ass that makes me lose all control.<br><br>
+      I keep imagining standing behind you, pressing my body against yours, sliding my hands slowly down your sides until I’m gripping your waist hard. I want to pull your hair gently, tilt your head back, and kiss your neck while my hard cock presses against your ass, letting you feel exactly how much you turn me on.<br><br>
+      I want to lay you down, spread your legs wide, and taste you. I want to run my tongue over every inch of your pussy until you’re soaking wet and trembling, begging me to stop teasing and fuck you properly.
+    </p>
+    <div class="letter-sign">— forever yours 💕</div>
+  </div>
+</section>
+
+<!-- FINAL -->
+<section class="final">
+  <div class="reveal">
+    <p class="sparkle-text">You are the most<br>beautiful thing<br>in my world.</p>
+    <span class="hearts-rain">💗 💓 💞 💗 💓</span>
+    <p class="final-note">This page will always be here, just like my desire for you — endless and burning.</p>
+  </div>
+</section>
+
+<script>
+// All your original JavaScript (cursor, stars, petals, click hearts, scroll reveal) remains the same
+const cursor = document.getElementById('cursor');
+const trail = document.getElementById('cursorTrail');
+let mx = 0, my = 0;
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+  setTimeout(() => { trail.style.left = mx + 'px'; trail.style.top = my + 'px'; }, 80);
+});
+
+const starsEl = document.getElementById('stars');
+for (let i = 0; i < 120; i++) {
+  const s = document.createElement('div');
+  s.className = 'star';
+  const size = Math.random() * 2.5 + 0.5;
+  s.style.cssText = `width:${size}px;height:${size}px;top:${Math.random()*100}%;left:${Math.random()*100}%;--d:${(Math.random()*4+2).toFixed(1)}s;animation-delay:${(Math.random()*5).toFixed(1)}s`;
+  starsEl.appendChild(s);
+}
+
+const petalContainer = document.getElementById('petals');
+const emojis = ['🌸','🌺','💮','🌷','✿','❀'];
+function spawnPetal() {
+  const p = document.createElement('div');
+  p.className = 'petal';
+  p.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+  const left = Math.random() * 100;
+  const dur = (Math.random() * 8 + 7).toFixed(1);
+  const drift = (Math.random() * 120 - 60).toFixed(0);
+  p.style.cssText = `left:${left}%;animation-duration:${dur}s;animation-delay:${(Math.random()*5).toFixed(1)}s;--drift:${drift}px;font-size:${(Math.random()*1+1).toFixed(1)}rem`;
+  petalContainer.appendChild(p);
+  setTimeout(() => p.remove(), (parseFloat(dur) + 5) * 1000);
+}
+for (let i = 0; i < 18; i++) setTimeout(spawnPetal, i * 600);
+setInterval(spawnPetal, 1200);
+
+const revealEls = document.querySelectorAll('.reveal');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+}, { threshold: 0.15 });
+revealEls.forEach(el => obs.observe(el));
+
+document.addEventListener('click', e => {
+  for (let i = 0; i < 6; i++) {
+    const h = document.createElement('div');
+    h.textContent = ['💗','💓','💕','💖','🔥'][Math.floor(Math.random()*5)];
+    h.style.cssText = `position:fixed;left:${e.clientX}px;top:${e.clientY}px;pointer-events:none;z-index:9999;font-size:${Math.random()*22+16}px;animation:clickHeart 1.2s ease forwards;transform:translate(-50%,-50%)`;
+    document.body.appendChild(h);
+    setTimeout(() => h.remove(), 1200);
+  }
+});
+
+const style = document.createElement('style');
+style.textContent = `@keyframes clickHeart {
+  0% { opacity:1; transform: translate(calc(-50% + ${Math.random()*60-30}px), -50%) scale(0.5); }
+  100% { opacity:0; transform: translate(calc(-50% + ${Math.random()*120-60}px), calc(-50% - 90px)) scale(1.6); }
+}`;
+document.head.appendChild(style);
+</script>
+</body>
+</html>
