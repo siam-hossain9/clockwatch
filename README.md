@@ -81,6 +81,27 @@ git push -u origin main
 | Search | `search.html` | Multi-API search with tab filters |
 | My List | `mylist.html` | Saved watchlist with type filters |
 
+## 🖼 Web Description Gallery
+
+The screenshots below are included in the README so the project has a visual web description right in the repo page.
+
+<div align="center">
+    <table>
+        <tr>
+            <td><img src="screenshots/Screenshot%202026-04-17%20023151.png" alt="Clockwatch screenshot 1" width="100%" /></td>
+            <td><img src="screenshots/Screenshot%202026-04-17%20023205.png" alt="Clockwatch screenshot 2" width="100%" /></td>
+        </tr>
+        <tr>
+            <td><img src="screenshots/Screenshot%202026-04-17%20023231.png" alt="Clockwatch screenshot 3" width="100%" /></td>
+            <td><img src="screenshots/Screenshot%202026-04-17%20023248.png" alt="Clockwatch screenshot 4" width="100%" /></td>
+        </tr>
+        <tr>
+            <td><img src="screenshots/Screenshot%202026-04-17%20023256.png" alt="Clockwatch screenshot 5" width="100%" /></td>
+            <td><img src="screenshots/Screenshot%202026-04-17%20023304.png" alt="Clockwatch screenshot 6" width="100%" /></td>
+        </tr>
+    </table>
+</div>
+
 ## 🔌 APIs Used
 
 | API | Purpose | Key Required |
@@ -101,6 +122,7 @@ clockwatch/
 ├── detail.html         # Detail page (all types)
 ├── search.html         # Search results
 ├── mylist.html         # Watchlist
+├── screenshots/        # Saved UI screenshots
 ├── vercel.json         # Vercel deployment config
 ├── css/
 │   ├── style.css       # Main styles (variables, components)

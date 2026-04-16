@@ -1274,6 +1274,10 @@ ul {
     color: var(--color-text-muted);
 }
 
+.mylist-empty-cta {
+    margin-top: 20px;
+}
+
 .mylist-empty-icon {
     font-size: 4rem;
     margin-bottom: 16px;
