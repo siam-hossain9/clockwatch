@@ -1,18 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Your saved watchlist on WASUSANOCH. Keep track of movies, TV shows, and anime you want to watch.">
+    <meta name="description"
+        content="Your saved watchlist on WASUSANOCH. Keep track of movies, TV shows, and anime you want to watch.">
     <meta property="og:title" content="My List - WASUSANOCH">
     <meta property="og:type" content="website">
     <meta name="theme-color" content="#E50914">
     <title>My List - WASUSANOCH</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' font-family='Arial'>W</text></svg>">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' font-family='Arial'>W</text></svg>">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/animations.css">
     <link rel="stylesheet" href="css/responsive.css">
 </head>
+
 <body>
     <nav id="main-nav" aria-label="Main navigation"></nav>
 
@@ -20,19 +24,19 @@
         <div class="mylist-header">
             <h1 class="page-title">My WASUSANOCH List</h1>
             <p class="mylist-count" id="listCount"></p>
-            <div class="search-tabs" style="margin-top:20px;">
+            <div class="search-tabs mylist-tabs">
                 <button class="search-tab active" data-tab="all" id="tabAll">All</button>
                 <button class="search-tab" data-tab="movie" id="tabMovies">Movies</button>
                 <button class="search-tab" data-tab="tv" id="tabTV">TV Shows</button>
                 <button class="search-tab" data-tab="tvmaze" id="tabTVMaze">TVMaze</button>
                 <button class="search-tab" data-tab="anime" id="tabAnime">Anime</button>
-                <div class="mylist-sort" style="display:flex;gap:10px;">
-                    <select id="sortList" class="filter-select">
+                <div class="mylist-sort">
+                    <select id="sortList" class="filter-select" aria-label="Sort saved items">
                         <option value="newest">Added: Newest First</option>
                         <option value="oldest">Added: Oldest First</option>
                         <option value="alpha">A-Z</option>
                     </select>
-                    <button class="btn btn-outline" id="clearAllBtn" style="display:none;">Clear All</button>
+                    <button class="btn btn-outline" id="clearAllBtn" hidden>Clear All</button>
                 </div>
             </div>
         </div>
@@ -49,73 +53,73 @@
     <script src="js/mylist.js"></script>
     <script src="js/ui.js"></script>
     <script>
-    const MyListPage = (() => {
-        let currentFilter = 'all';
+        const MyListPage = (() => {
+            let currentFilter = 'all';
 
-        function init() {
-            UI.renderNav('mylist');
-            UI.renderFooter();
-            UI.initBackToTop();
+            function init() {
+                UI.renderNav('mylist');
+                UI.renderFooter();
+                UI.initBackToTop();
 
-            renderList();
+                renderList();
 
-            document.querySelectorAll('.search-tab').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    document.querySelectorAll('.search-tab').forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-                    currentFilter = tab.dataset.tab;
-                    renderList();
+                document.querySelectorAll('.search-tab').forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        document.querySelectorAll('.search-tab').forEach(t => t.classList.remove('active'));
+                        tab.classList.add('active');
+                        currentFilter = tab.dataset.tab;
+                        renderList();
+                    });
                 });
-            });
 
-            document.getElementById('clearAllBtn')?.addEventListener('click', () => {
-                if (confirm('Are you sure you want to clear your entire list?')) {
-                    MyList.clear();
-                    renderList();
-                    MyList.showToast('List cleared');
-                }
-            });
-        }
-
-        function renderList() {
-            const grid = document.getElementById('myListGrid');
-            const countEl = document.getElementById('listCount');
-            const clearBtn = document.getElementById('clearAllBtn');
-
-            let items = MyList.getAll();
-            if (currentFilter !== 'all') {
-                items = items.filter(i => i.type === currentFilter);
+                document.getElementById('clearAllBtn')?.addEventListener('click', () => {
+                    if (confirm('Are you sure you want to clear your entire list?')) {
+                        MyList.clear();
+                        renderList();
+                        MyList.showToast('List cleared');
+                    }
+                });
             }
 
-            // Sort by most recently added
-            items.sort((a, b) => (b.addedAt || 0) - (a.addedAt || 0));
+            function renderList() {
+                const grid = document.getElementById('myListGrid');
+                const countEl = document.getElementById('listCount');
+                const clearBtn = document.getElementById('clearAllBtn');
 
-            const totalCount = MyList.getAll().length;
-            countEl.textContent = `${totalCount} item${totalCount !== 1 ? 's' : ''} saved`;
-            clearBtn.style.display = totalCount > 0 ? '' : 'none';
+                let items = MyList.getAll();
+                if (currentFilter !== 'all') {
+                    items = items.filter(i => i.type === currentFilter);
+                }
 
-            if (items.length === 0) {
-                grid.innerHTML = `
-                    <div class="mylist-empty col-full">
-                        <div class="mylist-empty-icon">List</div>
+                // Sort by most recently added
+                items.sort((a, b) => (b.addedAt || 0) - (a.addedAt || 0));
+
+                const totalCount = MyList.getAll().length;
+                countEl.textContent = `${totalCount} item${totalCount !== 1 ? 's' : ''} saved`;
+                clearBtn.hidden = totalCount === 0;
+
+                if (items.length === 0) {
+                    grid.innerHTML = `
+                    <div class="empty-state mylist-empty col-full">
+                        <img class="empty-state-illustration" src="${CONFIG.EMPTY_LIBRARY_ILLUSTRATION}" alt="" aria-hidden="true" />
                         <h2>Your list is empty</h2>
                         <p class="text-muted">Looks like you haven't added anything yet.</p>
                         <a href="index.html" class="btn btn-primary" style="margin-top:20px;">Discover Content</a>
                     </div>
                 `;
-                return;
-            }
+                    return;
+                }
 
-            grid.innerHTML = items.map(item => {
-                const posterUrl = item.poster || CONFIG.PLACEHOLDER_IMG;
-                const ratingColor = UI.getRatingColor(parseFloat(item.rating));
-                let detailUrl = '#';
-                if (item.type === 'movie') detailUrl = `detail.html?type=movie&id=${item.id}`;
-                else if (item.type === 'tv') detailUrl = `detail.html?type=tv&id=${item.id}`;
-                else if (item.type === 'tvmaze') detailUrl = `detail.html?type=tvmaze&id=${item.id}`;
-                else if (item.type === 'anime') detailUrl = `detail.html?type=anime&id=${item.id}`;
+                grid.innerHTML = items.map(item => {
+                    const posterUrl = item.poster || CONFIG.PLACEHOLDER_IMG;
+                    const ratingColor = UI.getRatingColor(parseFloat(item.rating));
+                    let detailUrl = '#';
+                    if (item.type === 'movie') detailUrl = `detail.html?type=movie&id=${item.id}`;
+                    else if (item.type === 'tv') detailUrl = `detail.html?type=tv&id=${item.id}`;
+                    else if (item.type === 'tvmaze') detailUrl = `detail.html?type=tvmaze&id=${item.id}`;
+                    else if (item.type === 'anime') detailUrl = `detail.html?type=anime&id=${item.id}`;
 
-                return `
+                    return `
                     <div class="content-card">
                         <a href="${detailUrl}" class="card-link" aria-label="${item.title}">
                             <div class="card-poster">
@@ -138,12 +142,13 @@
                         </button>
                     </div>
                 `;
-            }).join('');
-        }
+                }).join('');
+            }
 
-        return { init, renderList };
-    })();
-    document.addEventListener('DOMContentLoaded', MyListPage.init);
+            return { init, renderList };
+        })();
+        document.addEventListener('DOMContentLoaded', MyListPage.init);
     </script>
 </body>
+
 </html>

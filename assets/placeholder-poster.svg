@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="450" viewBox="0 0 300 450" role="img" aria-labelledby="title desc">
+  <title id="title">Clockwatch poster placeholder</title>
+  <desc id="desc">Dark cinema-style poster with red accent glow and a play symbol.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#101014"/>
+      <stop offset="55%" stop-color="#17171d"/>
+      <stop offset="100%" stop-color="#07070a"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ff4d5f"/>
+      <stop offset="100%" stop-color="#b20710"/>
+    </linearGradient>
+  </defs>
+  <rect width="300" height="450" fill="url(#bg)"/>
+  <rect x="18" y="18" width="264" height="414" rx="22" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="2"/>
+  <circle cx="150" cy="160" r="78" fill="rgba(229,9,20,0.12)"/>
+  <circle cx="150" cy="160" r="48" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="10"/>
+  <polygon points="138,138 178,160 138,182" fill="url(#accent)"/>
+  <path d="M50 330h200" stroke="rgba(255,255,255,0.12)" stroke-width="2"/>
+  <rect x="50" y="348" width="200" height="18" rx="9" fill="rgba(255,255,255,0.08)"/>
+  <rect x="50" y="374" width="150" height="12" rx="6" fill="rgba(255,255,255,0.06)"/>
+  <path d="M36 92c22-26 56-40 114-40s92 14 114 40" fill="none" stroke="rgba(229,9,20,0.18)" stroke-width="3" stroke-linecap="round"/>
+  <path d="M36 358c22 26 56 40 114 40s92-14 114-40" fill="none" stroke="rgba(229,9,20,0.18)" stroke-width="3" stroke-linecap="round"/>
+</svg>

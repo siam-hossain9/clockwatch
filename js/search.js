@@ -6,6 +6,7 @@
 const SearchPage = (() => {
     let currentTab = 'all';
     let searchResults = { movies: [], tv: [], anime: [] };
+    let lastQuery = '';
 
     function init() {
         UI.renderNav('search');
@@ -44,6 +45,7 @@ const SearchPage = (() => {
 
     async function performSearch(query) {
         const resultsContainer = document.getElementById('searchResults');
+        lastQuery = query;
         resultsContainer.innerHTML = `
             <div class="loading-spinner"><div class="spinner"></div></div>
         `;
@@ -97,8 +99,8 @@ const SearchPage = (() => {
 
         if (!hasResults) {
             container.innerHTML = `
-                <div class="mylist-empty">
-                    <div class="mylist-empty-icon">Search</div>
+                <div class="empty-state mylist-empty">
+                    <img class="empty-state-illustration" src="${CONFIG.EMPTY_SEARCH_ILLUSTRATION}" alt="" aria-hidden="true" />
                     <h2>No results found</h2>
                     <p class="text-muted">We couldn't find anything matching "${lastQuery}"</p>
                 </div>

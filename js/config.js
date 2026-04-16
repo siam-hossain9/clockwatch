@@ -75,25 +75,11 @@ const CONFIG = {
         WESTERN: 37,
     },
 
-    // Placeholder image for missing posters
-    PLACEHOLDER_IMG: 'data:image/svg+xml,' + encodeURIComponent(`
-        <svg xmlns="http://www.w3.org/2000/svg" width="300" height="450" viewBox="0 0 300 450">
-            <rect fill="#1a1a1a" width="300" height="450"/>
-            <text fill="#555" font-family="Arial" font-size="14" text-anchor="middle" x="150" y="220">No Image</text>
-        </svg>
-    `),
-
-    PLACEHOLDER_BACKDROP: 'data:image/svg+xml,' + encodeURIComponent(`
-        <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
-            <rect fill="#141414" width="1280" height="720"/>
-            <text fill="#333" font-family="Arial" font-size="24" text-anchor="middle" x="640" y="360">WASUSANOCH</text>
-        </svg>
-    `),
-
-    PLACEHOLDER_PROFILE: 'data:image/svg+xml,' + encodeURIComponent(`
-        <svg xmlns="http://www.w3.org/2000/svg" width="185" height="278" viewBox="0 0 185 278">
-            <rect fill="#1a1a1a" width="185" height="278"/>
-            <text fill="#555" font-family="Arial" font-size="20" text-anchor="middle" x="92" y="150">Profile</text>
-        </svg>
-    `),
+    // Local visual placeholders and empty-state artwork
+    PLACEHOLDER_IMG: 'assets/placeholder-poster.svg',
+    PLACEHOLDER_BACKDROP: 'assets/placeholder-backdrop.svg',
+    PLACEHOLDER_PROFILE: 'assets/placeholder-profile.svg',
+    EMPTY_SEARCH_ILLUSTRATION: 'assets/empty-search.svg',
+    EMPTY_LIBRARY_ILLUSTRATION: 'assets/empty-library.svg',
+    ERROR_ILLUSTRATION: 'assets/error-state.svg',
 };

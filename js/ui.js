@@ -140,7 +140,7 @@ const UI = (() => {
         // Auth listeners
         document.getElementById('navLoginBtn')?.addEventListener('click', openLoginModal);
         document.getElementById('navLogoutBtn')?.addEventListener('click', Auth.logout);
-        
+
         // Profile Dropdown Desktop logic
         const profileBtn = document.querySelector('.nav-profile-btn.has-user');
         const dropdown = document.querySelector('.nav-profile-dropdown');
@@ -198,7 +198,7 @@ const UI = (() => {
 
         modal.querySelector('.modal-close').addEventListener('click', () => closeModal(modal));
         modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(modal); });
-        
+
         document.getElementById('authForm').addEventListener('submit', (e) => {
             e.preventDefault();
             const email = document.getElementById('authEmail').value;
@@ -514,10 +514,10 @@ const UI = (() => {
         const modal = document.createElement('div');
         modal.id = 'trailerModal';
         modal.className = 'modal-overlay';
-        
-        let iframeSrc = isEmbed 
-                        ? videoKey // Full embed URL passed
-                        : `https://www.youtube.com/embed/${videoKey}?autoplay=1&rel=0`;
+
+        let iframeSrc = isEmbed
+            ? videoKey // Full embed URL passed
+            : `https://www.youtube.com/embed/${videoKey}?autoplay=1&rel=0`;
 
         modal.innerHTML = `
             <div class="modal-content trailer-modal ${isEmbed ? 'full-playback-modal' : ''}">
@@ -604,7 +604,7 @@ const UI = (() => {
     function showError(container, message = 'Something went wrong', retryFn = null) {
         container.innerHTML = `
             <div class="error-display">
-                <div class="error-icon">!</div>
+                <img class="error-illustration" src="${CONFIG.ERROR_ILLUSTRATION}" alt="" aria-hidden="true" />
                 <p class="error-message">${message}</p>
                 ${retryFn ? '<button class="btn btn-primary error-retry">Retry</button>' : ''}
             </div>

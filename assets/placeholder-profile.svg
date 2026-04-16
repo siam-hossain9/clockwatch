@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="185" height="278" viewBox="0 0 185 278" role="img" aria-labelledby="title desc">
+  <title id="title">Clockwatch profile placeholder</title>
+  <desc id="desc">Minimal profile card with a soft red glow and avatar silhouette.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#101014"/>
+      <stop offset="100%" stop-color="#1b1b22"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="30%" r="65%">
+      <stop offset="0%" stop-color="#ff4d5f" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#ff4d5f" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="185" height="278" rx="18" fill="url(#bg)"/>
+  <rect x="10" y="10" width="165" height="258" rx="14" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="2"/>
+  <rect width="185" height="278" rx="18" fill="url(#glow)"/>
+  <circle cx="92.5" cy="102" r="44" fill="rgba(255,255,255,0.08)"/>
+  <circle cx="92.5" cy="92" r="24" fill="rgba(255,255,255,0.18)"/>
+  <path d="M52 180c10-28 29-42 40-42h1c11 0 30 14 40 42" fill="rgba(255,255,255,0.16)"/>
+  <rect x="34" y="212" width="117" height="10" rx="5" fill="rgba(255,255,255,0.12)"/>
+  <rect x="52" y="232" width="81" height="8" rx="4" fill="rgba(255,255,255,0.08)"/>
+  <circle cx="34" cy="28" r="6" fill="#ff4d5f"/>
+  <circle cx="151" cy="250" r="6" fill="#ffd700" fill-opacity="0.8"/>
+</svg>
