@@ -1,5 +1,5 @@
 /**
- * WASUSANOCH - UI Components & Helpers
+ * Dororo - UI Components & Helpers
  * Shared UI generation functions: cards, rows, skeletons, modals, nav, footer
  */
 
@@ -8,13 +8,13 @@ const UI = (() => {
     // Authentication (Mock)
     // =============================================
     const Auth = {
-        getUser: () => JSON.parse(localStorage.getItem('WASUSANOCH_USER')),
+        getUser: () => JSON.parse(localStorage.getItem('Dororo_USER')),
         login: (username) => {
-            localStorage.setItem('WASUSANOCH_USER', JSON.stringify({ username }));
+            localStorage.setItem('Dororo_USER', JSON.stringify({ username }));
             document.dispatchEvent(new Event('authChanged'));
         },
         logout: () => {
-            localStorage.removeItem('WASUSANOCH_USER');
+            localStorage.removeItem('Dororo_USER');
             document.dispatchEvent(new Event('authChanged'));
             window.location.href = 'index.html';
         }
@@ -36,9 +36,9 @@ const UI = (() => {
         if (!nav) return;
         nav.innerHTML = `
             <div class="nav-container">
-                <a href="index.html" class="nav-logo" aria-label="WASUSANOCH Home">
-                    <span class="logo-icon">W</span>
-                    <span class="logo-text">WASUSANOCH</span>
+                <a href="index.html" class="nav-logo" aria-label="Dororo Home">
+                    <span class="logo-icon">D</span>
+                    <span class="logo-text">Dororo</span>
                 </a>
                 <ul class="nav-links" id="navLinks">
                     <li><a href="index.html" class="${activePage === 'home' ? 'active' : ''}">Home</a></li>
@@ -187,7 +187,7 @@ const UI = (() => {
                     </div>
                 </form>
                 <div class="auth-footer">
-                    <p>New to WASUSANOCH? <b>Sign up now.</b></p>
+                    <p>New to Dororo? <b class="auth-signup-link" style="cursor:pointer;">Sign up now.</b></p>
                     <p class="auth-recaptcha">This page is protected by Google reCAPTCHA to ensure you're not a bot.</p>
                 </div>
             </div>
@@ -205,6 +205,89 @@ const UI = (() => {
             Auth.login(email);
             closeModal(modal);
             UI.showToast('Successfully signed in!', 'success');
+        });
+
+        // Wire "Sign up now" link
+        modal.querySelector('.auth-signup-link')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            closeModal(modal);
+            openSignUpModal();
+        });
+    }
+
+    // =============================================
+    // Sign Up Modal
+    // =============================================
+    function openSignUpModal() {
+        const existing = document.getElementById('signupModal');
+        if (existing) existing.remove();
+
+        const modal = document.createElement('div');
+        modal.id = 'signupModal';
+        modal.className = 'modal-overlay auth-modal-overlay';
+        modal.innerHTML = `
+            <div class="modal-content auth-modal">
+                <button class="modal-close" aria-label="Close">&times;</button>
+                <div class="auth-header">
+                    <h2>Sign Up</h2>
+                </div>
+                <form id="signupForm" class="auth-form">
+                    <div class="form-group">
+                        <input type="text" id="signupName" placeholder="Username" required minlength="2">
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="signupEmail" placeholder="Email address" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="signupPassword" placeholder="Password" required minlength="6">
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="signupConfirm" placeholder="Confirm password" required minlength="6">
+                    </div>
+                    <div id="signupError" style="color:var(--color-red);font-size:0.85rem;margin-bottom:10px;display:none;"></div>
+                    <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+                </form>
+                <div class="auth-footer">
+                    <p>Already have an account? <b class="auth-login-link" style="cursor:pointer;">Sign in</b></p>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        document.body.style.overflow = 'hidden';
+        requestAnimationFrame(() => modal.classList.add('active'));
+
+        modal.querySelector('.modal-close').addEventListener('click', () => closeModal(modal));
+        modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(modal); });
+
+        document.getElementById('signupForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('signupName').value.trim();
+            const email = document.getElementById('signupEmail').value.trim();
+            const pass = document.getElementById('signupPassword').value;
+            const confirm = document.getElementById('signupConfirm').value;
+            const errEl = document.getElementById('signupError');
+
+            if (pass !== confirm) {
+                errEl.textContent = 'Passwords do not match.';
+                errEl.style.display = 'block';
+                return;
+            }
+            if (pass.length < 6) {
+                errEl.textContent = 'Password must be at least 6 characters.';
+                errEl.style.display = 'block';
+                return;
+            }
+
+            Auth.login(email);
+            closeModal(modal);
+            UI.showToast(`Welcome, ${name}! Account created successfully.`, 'success');
+        });
+
+        // Wire "Sign in" link
+        modal.querySelector('.auth-login-link')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            closeModal(modal);
+            openLoginModal();
         });
     }
 
@@ -252,11 +335,11 @@ const UI = (() => {
                 <div class="footer-top">
                     <div class="footer-brand">
                         <a href="index.html" class="footer-logo">
-                            <span class="logo-icon">W</span>
-                            <span class="logo-text">WASUSANOCH</span>
+                            <span class="logo-icon">D</span>
+                            <span class="logo-text">Dororo</span>
                         </a>
                         <p class="footer-tagline">${CONFIG.TAGLINE}</p>
-                        <p class="footer-about">WASUSANOCH is your ultimate destination to discover movies, TV shows, and anime. Find what to watch next!</p>
+                        <p class="footer-about">Dororo is your ultimate destination to discover movies, TV shows, and anime. Find what to watch next!</p>
                     </div>
                     <div class="footer-links-group">
                         <h4>Navigation</h4>
@@ -281,6 +364,7 @@ const UI = (() => {
                             <li><a href="https://www.omdbapi.com" target="_blank" rel="noopener">OMDB</a></li>
                             <li><a href="https://www.tvmaze.com" target="_blank" rel="noopener">TVMaze</a></li>
                             <li><a href="https://jikan.moe" target="_blank" rel="noopener">Jikan (MAL)</a></li>
+                            <li><a href="https://anilist.co" target="_blank" rel="noopener">AniList</a></li>
                         </ul>
                     </div>
                 </div>
@@ -329,6 +413,12 @@ const UI = (() => {
             year = item.year || (item.aired?.from ? new Date(item.aired.from).getFullYear() : '');
             rating = item.score ? item.score.toFixed(1) : 'N/A';
             detailUrl = `detail.html?type=anime&id=${item.mal_id}`;
+        } else if (type === 'anilist') {
+            posterUrl = API.ANILIST.imgUrl(item);
+            title = API.ANILIST.titleText(item);
+            year = item.seasonYear || item.startDate?.year || '';
+            rating = item.averageScore ? (item.averageScore / 10).toFixed(1) : 'N/A';
+            detailUrl = `detail.html?type=anilist&id=${item.id}`;
         }
 
         ratingColor = getRatingColor(parseFloat(rating));
@@ -359,7 +449,7 @@ const UI = (() => {
                 </div>
             </a>
             <button class="card-bookmark" aria-label="Add to My List" onclick="event.preventDefault();event.stopPropagation();MyList.toggle({id:'${type === 'anime' ? item.mal_id : item.id}',type:'${type}',title:'${title.replace(/'/g, "\\'")}',poster:'${posterUrl.replace(/'/g, "\\'")}',rating:'${rating}',year:'${year}'}, this)">
-                ${MyList.has(type === 'anime' ? item.mal_id : item.id, type) ? '✓' : '+'}
+                ${MyList.has(type === 'anilist' ? item.id : (type === 'anime' ? item.mal_id : item.id), type) ? '✓' : '+'}
             </button>
         `;
 
@@ -650,7 +740,6 @@ const UI = (() => {
         openTrailerModal,
         closeModal,
         initBackToTop,
-        initScrollReveal,
         initScrollReveal,
         initLazyLoad,
         showError,

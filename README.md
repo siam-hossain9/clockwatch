@@ -1,12 +1,12 @@
-# ⏱ WASUSANOCH
+# ⏱ Dororo
 
 Streaming Discovery Platform
 
 > A production-ready, Netflix-inspired responsive web application.
 
-WASUSANOCH is a modern, responsive web application for discovering movies, TV shows, and anime. Built with pure HTML, CSS, and Vanilla JavaScript — no frameworks, no build step required.
+Dororo is a modern, responsive web application for discovering movies, TV shows, and anime. Built with pure HTML, CSS, and Vanilla JavaScript — no frameworks, no build step required.
 
-![WASUSANOCH](https://img.shields.io/badge/WASUSANOCH-E50914?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48dGV4dCB5PSIuOWVtIiBmb250LXNpemU9IjkwIj7imLE8L3RleHQ+PC9zdmc+&logoColor=white)
+![Dororo](https://img.shields.io/badge/Dororo-E50914?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48dGV4dCB5PSIuOWVtIiBmb250LXNpemU9IjkwIj7imLE8L3RleHQ+PC9zdmc+&logoColor=white)
 
 ---
 
@@ -14,7 +14,7 @@ WASUSANOCH is a modern, responsive web application for discovering movies, TV sh
 
 ### Recommended Repository Name
 
-`wasusanoch-streaming-platform`
+`Dororo-streaming-platform`
 
 ### Repository Description (GitHub About)
 
@@ -45,16 +45,16 @@ Create a new repository in your GitHub account with the name above, then run:
 ```bash
 git init
 git add .
-git commit -m "Initial commit: WASUSANOCH streaming platform"
+git commit -m "Initial commit: Dororo streaming platform"
 git branch -M main
-git remote add origin https://github.com/<your-username>/wasusanoch-streaming-platform.git
+git remote add origin https://github.com/<your-username>/Dororo-streaming-platform.git
 git push -u origin main
 ```
 
 If the remote already exists:
 
 ```bash
-git remote set-url origin https://github.com/<your-username>/wasusanoch-streaming-platform.git
+git remote set-url origin https://github.com/<your-username>/Dororo-streaming-platform.git
 git push -u origin main
 ```
 

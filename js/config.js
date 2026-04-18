@@ -1,10 +1,10 @@
 /**
- * WASUSANOCH - Configuration & Constants
+ * Dororo - Configuration & Constants
  * Central configuration for all API keys, URLs, and app settings
  */
 
 const CONFIG = {
-    APP_NAME: 'WASUSANOCH',
+    APP_NAME: 'Dororo',
     TAGLINE: 'Your Time to Watch',
     COPYRIGHT: 'Website created by Siam Hossain, AI help Claude',
 
@@ -35,6 +35,11 @@ const CONFIG = {
     // Jikan API Configuration (MyAnimeList)
     JIKAN: {
         BASE_URL: 'https://api.jikan.moe/v4',
+    },
+
+    // AniList API Configuration (GraphQL)
+    ANILIST: {
+        BASE_URL: 'https://graphql.anilist.co',
     },
 
     // Cache settings

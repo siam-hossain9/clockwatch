@@ -5,7 +5,7 @@
 
 const SearchPage = (() => {
     let currentTab = 'all';
-    let searchResults = { movies: [], tv: [], anime: [] };
+    let searchResults = { movies: [], tv: [], anime: [], anilist: [] };
     let lastQuery = '';
 
     function init() {
@@ -50,13 +50,14 @@ const SearchPage = (() => {
             <div class="loading-spinner"><div class="spinner"></div></div>
         `;
 
-        searchResults = { movies: [], tv: [], anime: [] };
+        searchResults = { movies: [], tv: [], anime: [], anilist: [] };
 
         // Search all APIs in parallel
-        const [tmdbRes, tvmazeRes, jikanRes] = await Promise.allSettled([
+        const [tmdbRes, tvmazeRes, jikanRes, anilistRes] = await Promise.allSettled([
             API.TMDB.searchMovies(query),
             API.TVMAZE.search(query),
             API.JIKAN.searchAnime(query),
+            API.ANILIST.search(query),
         ]);
 
         if (tmdbRes.status === 'fulfilled') {
@@ -67,6 +68,9 @@ const SearchPage = (() => {
         }
         if (jikanRes.status === 'fulfilled') {
             searchResults.anime = jikanRes.value.data || [];
+        }
+        if (anilistRes.status === 'fulfilled') {
+            searchResults.anilist = anilistRes.value?.data?.Page?.media || [];
         }
 
         renderResults();
@@ -94,7 +98,12 @@ const SearchPage = (() => {
 
         if (showAnime && searchResults.anime.length > 0) {
             hasResults = true;
-            container.innerHTML += renderSection('Anime', searchResults.anime, 'anime');
+            container.innerHTML += renderSection('Anime (MAL)', searchResults.anime, 'anime');
+        }
+
+        if (showAnime && searchResults.anilist.length > 0) {
+            hasResults = true;
+            container.innerHTML += renderSection('Anime (AniList)', searchResults.anilist, 'anilist');
         }
 
         if (!hasResults) {

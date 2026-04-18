@@ -1,5 +1,5 @@
 /**
- * WASUSANOCH - Main App Logic (Homepage)
+ * Dororo - Main App Logic (Homepage)
  * Handles hero carousel, content rows, and page initialization
  */
 
@@ -36,7 +36,7 @@ const App = (() => {
             addHeroIndicators(heroEl);
             startHeroRotation(heroEl);
         } catch (err) {
-            heroEl.innerHTML = `<div class="hero-content" style="padding-top:200px;"><h1 class="hero-title">Welcome to WASUSANOCH</h1><p class="hero-overview">${CONFIG.TAGLINE}</p></div>`;
+            heroEl.innerHTML = `<div class="hero-content" style="padding-top:200px;"><h1 class="hero-title">Welcome to Dororo</h1><p class="hero-overview">${CONFIG.TAGLINE}</p></div>`;
         }
     }
 
@@ -94,11 +94,13 @@ const App = (() => {
             UI.createContentRow('Popular Movies', 'row-popular'),
             UI.createContentRow('Popular TV Shows', 'row-tv'),
             UI.createContentRow('Top Anime', 'row-anime'),
+            UI.createContentRow('Trending Anime', 'row-anilist-trending'),
             UI.createContentRow('Top Rated Movies', 'row-toprated'),
             UI.createContentRow('Action Movies', 'row-action'),
             UI.createContentRow('Comedy Movies', 'row-comedy'),
             UI.createContentRow('Horror Movies', 'row-horror'),
             UI.createContentRow('Seasonal Anime', 'row-seasonal'),
+            UI.createContentRow('Popular Anime', 'row-anilist-popular'),
             UI.createContentRow('Airing Today', 'row-airing'),
         ].join('');
 
@@ -121,6 +123,10 @@ const App = (() => {
 
         // Airing Today
         setTimeout(() => loadAiringRow('row-airing'), 1000);
+
+        // AniList rows
+        setTimeout(() => loadAniListRow('row-anilist-trending', () => API.ANILIST.trending()), 600);
+        setTimeout(() => loadAniListRow('row-anilist-popular', () => API.ANILIST.popular()), 1100);
     }
 
     async function loadRow(containerId, fetchFn, type) {
@@ -173,6 +179,18 @@ const App = (() => {
             console.error('Failed to load airing row:', err);
             const container = document.getElementById(containerId);
             if (container) container.innerHTML = '<p class="row-empty">Failed to load schedule</p>';
+        }
+    }
+
+    async function loadAniListRow(containerId, fetchFn) {
+        try {
+            const data = await fetchFn();
+            const items = data?.data?.Page?.media || [];
+            UI.populateRow(containerId, items.slice(0, 20), 'anilist');
+        } catch (err) {
+            console.error(`Failed to load AniList row ${containerId}:`, err);
+            const container = document.getElementById(containerId);
+            if (container) container.innerHTML = '<p class="row-empty">Failed to load anime</p>';
         }
     }
 

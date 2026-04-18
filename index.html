@@ -3,20 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="WASUSANOCH - Your ultimate destination to discover movies, TV shows, and anime. Find what to watch next!">
-    <meta name="keywords" content="movies, TV shows, anime, streaming, WASUSANOCH, watch, discover">
-    <meta name="author" content="WASUSANOCH">
-    <meta property="og:title" content="WASUSANOCH - Your Time to Watch">
+    <meta name="description" content="Dororo - Your ultimate destination to discover movies, TV shows, and anime. Find what to watch next!">
+    <meta name="keywords" content="movies, TV shows, anime, streaming, Dororo, watch, discover">
+    <meta name="author" content="Siam Hossain">
+    <meta property="og:title" content="Dororo - Your Time to Watch">
     <meta property="og:description" content="Discover trending movies, popular TV shows, and top anime all in one place.">
     <meta property="og:type" content="website">
     <meta name="theme-color" content="#E50914">
-    <title>WASUSANOCH - Your Time to Watch</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' font-family='Arial'>W</text></svg>">
+    <title>Dororo - Your Time to Watch</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' font-family='Arial' fill='%23E50914'>D</text></svg>">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/animations.css">
     <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/splash.css">
 </head>
-<body>
+<body style="overflow:hidden;">
+    <!-- ========== Splash / Intro Screen ========== -->
+    <div id="splash-screen">
+        <canvas id="splash-canvas"></canvas>
+
+        <!-- Title - Top Center -->
+        <div id="splash-title">
+            <h1 class="splash-brand">Dororo</h1>
+            <p class="splash-subtitle">Watch And Enjoy</p>
+        </div>
+
+        <!-- Enter Button - Center -->
+        <button id="splash-enter">Enter</button>
+
+        <!-- Credits - Bottom Left -->
+        <div id="splash-credits">
+            <p class="splash-developer">Develop By <strong>Siam Hossain</strong></p>
+            <p class="splash-contact"><a href="mailto:siamhossain1130@gmail.com">Contact Me</a></p>
+        </div>
+    </div>
+
+    <!-- ========== Main App ========== -->
     <nav id="main-nav" aria-label="Main navigation"></nav>
 
     <main class="page-content">
@@ -41,6 +63,7 @@
     <script src="js/api.js"></script>
     <script src="js/mylist.js"></script>
     <script src="js/ui.js"></script>
+    <script src="js/splash.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>

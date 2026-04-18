@@ -86,6 +86,7 @@ const API = (() => {
         nowPlaying: (page = 1) => tmdb('/movie/now_playing', { page }),
         upcomingMovies: (page = 1) => tmdb('/movie/upcoming', { page }),
         movieDetails: (id) => tmdb(`/movie/${id}`, { append_to_response: 'videos,credits,similar,external_ids' }),
+        tvDetails: (id) => tmdb(`/tv/${id}`, { append_to_response: 'videos,credits,similar,external_ids' }),
         movieCredits: (id) => tmdb(`/movie/${id}/credits`),
         movieVideos: (id) => tmdb(`/movie/${id}/videos`),
         movieSimilar: (id, page = 1) => tmdb(`/movie/${id}/similar`, { page }),
@@ -164,6 +165,106 @@ const API = (() => {
         seasonAnime: (year, season, page = 1) => jikan(`/seasons/${year}/${season}`, { page }),
     };
 
+    // =============================================
+    // AniList API (GraphQL)
+    // =============================================
+    async function anilistQuery(query, variables = {}) {
+        const cacheKey = `anilist_${JSON.stringify({ query: query.slice(0, 60), variables })}`;
+        const cached = getCached(cacheKey);
+        if (cached) return cached;
+
+        try {
+            const res = await fetch(CONFIG.ANILIST.BASE_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify({ query, variables })
+            });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const data = await res.json();
+            setCache(cacheKey, data);
+            return data;
+        } catch (err) {
+            console.error('[API] AniList error:', err);
+            throw err;
+        }
+    }
+
+    const ANILIST_MEDIA_FIELDS = `
+        id
+        title { romaji english native }
+        coverImage { extraLarge large medium }
+        bannerImage
+        description(asHtml: false)
+        averageScore
+        meanScore
+        popularity
+        trending
+        episodes
+        duration
+        status
+        season
+        seasonYear
+        format
+        genres
+        studios(isMain: true) { nodes { name } }
+        startDate { year month day }
+        trailer { id site }
+        nextAiringEpisode { airingAt episode }
+    `;
+
+    const ANILIST = {
+        trending: (page = 1, perPage = 20) => anilistQuery(`
+            query ($page: Int, $perPage: Int) {
+                Page(page: $page, perPage: $perPage) {
+                    media(sort: TRENDING_DESC, type: ANIME, isAdult: false) { ${ANILIST_MEDIA_FIELDS} }
+                }
+            }`, { page, perPage }),
+
+        popular: (page = 1, perPage = 20) => anilistQuery(`
+            query ($page: Int, $perPage: Int) {
+                Page(page: $page, perPage: $perPage) {
+                    media(sort: POPULARITY_DESC, type: ANIME, isAdult: false) { ${ANILIST_MEDIA_FIELDS} }
+                }
+            }`, { page, perPage }),
+
+        topRated: (page = 1, perPage = 20) => anilistQuery(`
+            query ($page: Int, $perPage: Int) {
+                Page(page: $page, perPage: $perPage) {
+                    media(sort: SCORE_DESC, type: ANIME, isAdult: false, minimumTagRank: 0) { ${ANILIST_MEDIA_FIELDS} }
+                }
+            }`, { page, perPage }),
+
+        search: (searchQuery, page = 1, perPage = 20) => anilistQuery(`
+            query ($search: String, $page: Int, $perPage: Int) {
+                Page(page: $page, perPage: $perPage) {
+                    media(search: $search, type: ANIME, isAdult: false) { ${ANILIST_MEDIA_FIELDS} }
+                }
+            }`, { search: searchQuery, page, perPage }),
+
+        details: (id) => anilistQuery(`
+            query ($id: Int) {
+                Media(id: $id, type: ANIME) {
+                    ${ANILIST_MEDIA_FIELDS}
+                    characters(sort: ROLE, perPage: 15) {
+                        nodes { id name { full } image { large medium } }
+                        edges { role }
+                    }
+                    recommendations(sort: RATING_DESC, perPage: 12) {
+                        nodes {
+                            mediaRecommendation {
+                                id title { romaji english } coverImage { large } averageScore
+                            }
+                        }
+                    }
+                    relations { edges { relationType node { id title { romaji english } coverImage { large } type format averageScore } } }
+                }
+            }`, { id }),
+
+        imgUrl: (media) => media?.coverImage?.extraLarge || media?.coverImage?.large || CONFIG.PLACEHOLDER_IMG,
+        bannerUrl: (media) => media?.bannerImage || media?.coverImage?.extraLarge || CONFIG.PLACEHOLDER_BACKDROP,
+        titleText: (media) => media?.title?.english || media?.title?.romaji || 'Unknown',
+    };
+
     // Public API
-    return { TMDB, OMDB, TVMAZE, JIKAN };
+    return { TMDB, OMDB, TVMAZE, JIKAN, ANILIST };
 })();
