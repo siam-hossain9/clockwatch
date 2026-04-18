@@ -4,170 +4,232 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Browse and discover popular, top-rated, and currently airing anime on Dororo.">
-    <meta property="og:title" content="Anime - Dororo">
-    <meta property="og:description" content="Explore thousands of anime series and movies on Dororo.">
-    <meta property="og:type" content="website">
-    <meta name="theme-color" content="#E50914">
-    <title>Anime - Dororo</title>
+    <title>Anime - Dororo (AniWatch Theme)</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' font-family='Arial' fill='%23E50914'>D</text></svg>">
-    <link rel="stylesheet" href="css/style.css?v=4">
-    <link rel="stylesheet" href="css/animations.css?v=4">
-    <link rel="stylesheet" href="css/responsive.css?v=4">
+    <link rel="stylesheet" href="css/style.css?v=5">
+    <link rel="stylesheet" href="css/animations.css?v=5">
+    <link rel="stylesheet" href="css/aniwatch.css?v=5">
 </head>
 <body>
     <nav id="main-nav" aria-label="Main navigation"></nav>
 
-    <main class="page-content">
-        <section class="hero" id="hero" aria-label="Featured anime">
-            <div class="hero-backdrop" style="background:var(--bg-primary)"></div>
-            <div class="hero-gradient"></div>
-        </section>
+    <div class="aw-container">
+        
+        <!-- Aniwatch Spotlight Hero -->
+        <div id="awSpotlight" class="aw-spotlight">
+            <div class="aw-spotlight-bg" style="background-image: url('assets/placeholder-backdrop.svg')"></div>
+            <div class="aw-spotlight-content skeleton-shimmer" style="height:200px; width:50%; border-radius:8px;"></div>
+        </div>
 
-        <div class="page-header">
-            <h1 class="page-title">Anime</h1>
-            <div class="filter-bar" id="filterBar">
-                <select class="filter-select" id="categoryFilter" aria-label="Category">
-                    <option value="top">Top Anime</option>
-                    <option value="airing">Currently Airing</option>
-                    <option value="upcoming">Upcoming</option>
-                    <option value="popular">Most Popular</option>
-                    <option value="seasonal">This Season</option>
-                </select>
-                <select class="filter-select" id="genreFilter" aria-label="Filter by genre">
-                    <option value="">All Genres</option>
-                    <option value="1">Action</option>
-                    <option value="2">Adventure</option>
-                    <option value="4">Comedy</option>
-                    <option value="8">Drama</option>
-                    <option value="10">Fantasy</option>
-                    <option value="14">Horror</option>
-                    <option value="7">Mystery</option>
-                    <option value="22">Romance</option>
-                    <option value="24">Sci-Fi</option>
-                    <option value="36">Slice of Life</option>
-                    <option value="30">Sports</option>
-                    <option value="37">Supernatural</option>
-                    <option value="41">Thriller</option>
-                </select>
+        <!-- Trending Horizontal -->
+        <h2 class="aw-section-header">Trending</h2>
+        <div id="awTrending" class="aw-trending-wrapper">
+            <div class="skeleton-shimmer" style="min-width:200px;height:120px;border-radius:8px;"></div>
+            <div class="skeleton-shimmer" style="min-width:200px;height:120px;border-radius:8px;"></div>
+            <div class="skeleton-shimmer" style="min-width:200px;height:120px;border-radius:8px;"></div>
+        </div>
+
+        <!-- Split Layout -->
+        <div class="aw-main-split">
+            <!-- Left Main Content -->
+            <div class="aw-content-left">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                    <h2 class="aw-section-header" style="margin:0;">Recently Updated</h2>
+                    <div class="aw-tabs">
+                        <div class="aw-tab active" data-filter="airing">Airing</div>
+                        <div class="aw-tab" data-filter="upcoming">Upcoming</div>
+                        <div class="aw-tab" data-filter="popular">Popular</div>
+                    </div>
+                </div>
+                
+                <div class="aw-film-grid" id="awGrid">
+                    <!-- Cards -->
+                </div>
+                <div style="text-align:center; padding: 30px 0;">
+                    <button class="btn btn-outline" id="loadMoreBtn">Load More</button>
+                </div>
+            </div>
+
+            <!-- Right Sidebar -->
+            <div class="aw-sidebar-right">
+                <h2 class="aw-section-header">Top Viewed</h2>
+                <div class="aw-tabs" style="margin-bottom:10px;">
+                    <div class="aw-tab active" style="padding:4px 10px;font-size:0.75rem;">Today</div>
+                    <div class="aw-tab" style="padding:4px 10px;font-size:0.75rem;">Week</div>
+                </div>
+                <div id="awSidebarList">
+                    <!-- List -->
+                </div>
             </div>
         </div>
 
-        <div class="content-grid" id="animeGrid">
-            <!-- Cards loaded by JS -->
-        </div>
-
-        <div class="load-more-container" id="loadMoreContainer">
-            <button class="btn btn-outline" id="loadMoreBtn">Load More</button>
-        </div>
-    </main>
+    </div>
 
     <footer id="main-footer" aria-label="Footer"></footer>
 
-    <script src="js/config.js?v=4"></script>
-    <script src="js/api.js?v=4"></script>
-    <script src="js/mylist.js?v=4"></script>
-    <script src="js/ui.js?v=4"></script>
+    <script src="js/config.js?v=5"></script>
+    <script src="js/api.js?v=5"></script>
+    <script src="js/mylist.js?v=5"></script>
+    <script src="js/ui.js?v=5"></script>
     <script>
-    const AnimePage = (() => {
+    const AwTheme = (() => {
         let currentPage = 1;
+        let currentFilter = 'airing';
         let isLoading = false;
-        let currentCategory = 'top';
-        let currentGenre = '';
-        let hasNextPage = true;
+
+        function createAwCard(anime) {
+            const title = anime.title_english || anime.title;
+            const poster = anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url;
+            const episodes = anime.episodes || '?';
+            const score = anime.score ? anime.score.toFixed(1) : 'N/A';
+            const type = anime.type || 'TV';
+
+            const div = document.createElement('div');
+            div.className = 'aw-film-card';
+            div.onclick = () => window.location.href = `detail.html?type=anime&id=${anime.mal_id}`;
+            div.innerHTML = `
+                <div class="aw-film-poster">
+                    <img src="${poster}" alt="${title}" loading="lazy" onerror="this.src='assets/placeholder-poster.svg'" />
+                    <div class="aw-film-overlay">
+                        <div class="aw-film-play-btn"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg></div>
+                    </div>
+                    <div class="aw-film-ticks">
+                        <div class="tick tick-eps">EPS ${episodes}</div>
+                        <div class="tick tick-sub">SUB</div>
+                    </div>
+                </div>
+                <div class="aw-film-detail">
+                    <h3 class="aw-film-title" title="${title}">${title}</h3>
+                    <div class="aw-film-meta">
+                        <span>${type}</span>
+                        <span><span style="color:var(--color-gold);">★</span> ${score}</span>
+                    </div>
+                </div>
+            `;
+            return div;
+        }
 
         async function init() {
             UI.renderNav('anime');
             UI.renderFooter();
-            UI.initBackToTop();
 
-            loadAnime(true);
-            loadHero();
+            loadSpotlight();
+            loadTrending();
+            loadGrid(true);
+            loadSidebar();
 
-            document.getElementById('categoryFilter')?.addEventListener('change', () => {
-                currentCategory = document.getElementById('categoryFilter').value;
-                currentPage = 1;
-                hasNextPage = true;
-                loadAnime(true);
+            // Setup Tabs
+            document.querySelectorAll('.aw-tab[data-filter]').forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    document.querySelectorAll('.aw-tab[data-filter]').forEach(t => t.classList.remove('active'));
+                    e.target.classList.add('active');
+                    currentFilter = e.target.getAttribute('data-filter');
+                    currentPage = 1;
+                    loadGrid(true);
+                });
             });
-            document.getElementById('genreFilter')?.addEventListener('change', () => {
-                currentGenre = document.getElementById('genreFilter').value;
-                currentPage = 1;
-                hasNextPage = true;
-                if (currentGenre) {
-                    document.getElementById('categoryFilter').value = 'top';
-                    currentCategory = 'top';
-                }
-                loadAnime(true);
+
+            document.getElementById('loadMoreBtn').addEventListener('click', () => {
+                currentPage++;
+                loadGrid(false);
             });
-            document.getElementById('loadMoreBtn')?.addEventListener('click', () => { currentPage++; loadAnime(false); });
         }
 
-        async function loadHero() {
+        async function loadSpotlight() {
             try {
-                const data = await API.JIKAN.topAnime(1);
-                const items = data.data || [];
+                const res = await API.JIKAN.topAnime(1);
+                const items = res.data || [];
                 if (items.length > 0) {
-                    const random = items[Math.floor(Math.random() * Math.min(5, items.length))];
-                    UI.renderHero(document.getElementById('hero'), random, 'anime');
+                    const hero = items[Math.floor(Math.random() * Math.min(5, items.length))];
+                    const bg = hero.trailer?.images?.maximum_image_url || hero.images?.jpg?.large_image_url;
+                    const desc = hero.synopsis ? hero.synopsis.split('. ')[0] + '.' : '';
+                    
+                    document.getElementById('awSpotlight').innerHTML = `
+                        <div class="aw-spotlight-bg" style="background-image: url('${bg}')"></div>
+                        <div class="aw-spotlight-content">
+                            <h1 class="aw-spotlight-title">${hero.title_english || hero.title}</h1>
+                            <div class="aw-spotlight-meta">
+                                <div class="tick tick-item"><i class="fa fa-play-circle"></i> ${hero.type || 'TV'}</div>
+                                <div class="tick tick-eps">EPS ${hero.episodes || '?'}</div>
+                                <div class="tick tick-sub">HD</div>
+                            </div>
+                            <p class="aw-spotlight-desc">${desc}</p>
+                            <button class="btn btn-primary" onclick="window.location.href='detail.html?type=anime&id=${hero.mal_id}'">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg> Watch Now
+                            </button>
+                        </div>
+                    `;
                 }
-            } catch {}
+            } catch (e) {}
         }
 
-        async function loadAnime(reset) {
+        async function loadTrending() {
+            try {
+                const wrap = document.getElementById('awTrending');
+                const res = await API.JIKAN.topAnime(1, 'bypopularity');
+                const trending = (res.data || []).slice(0, 10);
+                wrap.innerHTML = '';
+                
+                trending.forEach((anime, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'aw-trending-card';
+                    card.onclick = () => window.location.href = `detail.html?type=anime&id=${anime.mal_id}`;
+                    card.innerHTML = `
+                        <div class="aw-trending-card-img" style="background-image: url('${anime.images?.jpg?.large_image_url}')"></div>
+                        <div class="aw-trending-rank">${String(index+1).padStart(2, '0')}</div>
+                        <div class="aw-trending-content">
+                            <h3 class="aw-trending-title">${anime.title_english || anime.title}</h3>
+                        </div>
+                    `;
+                    wrap.appendChild(card);
+                });
+            } catch (e) {}
+        }
+
+        async function loadGrid(reset) {
             if (isLoading) return;
             isLoading = true;
-
-            const grid = document.getElementById('animeGrid');
-            const loadBtn = document.getElementById('loadMoreBtn');
-            if (reset) grid.innerHTML = UI.generateSkeletonGrid(18);
-            else loadBtn.textContent = 'Loading...';
+            const grid = document.getElementById('awGrid');
+            if (reset) grid.innerHTML = '';
 
             try {
-                let data;
-                if (currentGenre) {
-                    data = await API.JIKAN.animeByGenre(currentGenre, currentPage);
-                } else {
-                    switch (currentCategory) {
-                        case 'airing':
-                            data = await API.JIKAN.topAnime(currentPage, 'airing');
-                            break;
-                        case 'upcoming':
-                            data = await API.JIKAN.topAnime(currentPage, 'upcoming');
-                            break;
-                        case 'popular':
-                            data = await API.JIKAN.topAnime(currentPage, 'bypopularity');
-                            break;
-                        case 'seasonal':
-                            data = await API.JIKAN.seasonNow(currentPage);
-                            break;
-                        default:
-                            data = await API.JIKAN.topAnime(currentPage);
-                    }
-                }
-
-                const items = data.data || [];
-                hasNextPage = data.pagination?.has_next_page || false;
-
-                if (reset) grid.innerHTML = '';
-                items.forEach(anime => grid.appendChild(UI.createMovieCard(anime, 'anime')));
-
-                if (reset && items.length === 0) {
-                    grid.innerHTML = '<div class="mylist-empty"><div class="mylist-empty-icon">🎌</div><h2>No anime found</h2></div>';
-                }
-
-                loadBtn.style.display = hasNextPage ? '' : 'none';
-                loadBtn.textContent = 'Load More';
-            } catch (err) {
-                console.error('Anime load error:', err);
-                if (reset) UI.showError(grid, 'Failed to load anime. Jikan API may be rate limited — try again in a moment.', () => { currentPage = 1; loadAnime(true); });
-                loadBtn.textContent = 'Load More';
-            }
+                const res = await API.JIKAN.topAnime(currentPage, currentFilter);
+                const items = res.data || [];
+                items.forEach(anime => grid.appendChild(createAwCard(anime)));
+                document.getElementById('loadMoreBtn').style.display = res.pagination?.has_next_page ? '' : 'none';
+            } catch (e) {}
             isLoading = false;
+        }
+
+        async function loadSidebar() {
+            try {
+                const list = document.getElementById('awSidebarList');
+                const res = await API.JIKAN.topAnime(1);
+                const topItems = (res.data || []).slice(0, 10);
+                list.innerHTML = '';
+
+                topItems.forEach((anime, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'aw-top10-item';
+                    item.onclick = () => window.location.href = `detail.html?type=anime&id=${anime.mal_id}`;
+                    item.innerHTML = `
+                        <div class="aw-top10-rank">${String(index+1).padStart(2, '0')}</div>
+                        <img class="aw-top10-poster" src="${anime.images?.jpg?.image_url}" alt="${anime.title_english || anime.title}">
+                        <div class="aw-top10-detail">
+                            <h4 class="aw-top10-title">${anime.title_english || anime.title}</h4>
+                            <div class="aw-film-meta">
+                                <span><span style="color:var(--color-gold);">★</span> ${anime.score ? anime.score.toFixed(1) : 'N/A'}</span>
+                            </div>
+                        </div>
+                    `;
+                    list.appendChild(item);
+                });
+            } catch (e) {}
         }
 
         return { init };
     })();
-    document.addEventListener('DOMContentLoaded', AnimePage.init);
+    document.addEventListener('DOMContentLoaded', AwTheme.init);
     </script>
 </body>
 </html>

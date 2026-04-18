@@ -1,0 +1,311 @@
+/* aniwatch.css - Aniwatch Layout Clone using Dororo Theme */
+
+/* General Container overrides */
+.aw-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    padding-top: 80px; /* Below Nav */
+}
+
+/* Spotlight Hero */
+.aw-spotlight {
+    position: relative;
+    width: 100%;
+    height: 450px;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 40px;
+    display: flex;
+    align-items: flex-end;
+}
+.aw-spotlight-bg {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 1;
+}
+.aw-spotlight-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, var(--bg-primary) 0%, rgba(15,15,15,0.7) 40%, transparent 100%), linear-gradient(90deg, var(--bg-primary) 0%, rgba(15,15,15,0.8) 40%, transparent 100%);
+}
+.aw-spotlight-content {
+    position: relative;
+    z-index: 2;
+    padding: 40px;
+    max-width: 60%;
+}
+.aw-spotlight-title {
+    font-size: 2.8rem;
+    font-weight: 800;
+    margin-bottom: 12px;
+    color: var(--color-text);
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+    line-height: 1.1;
+}
+.aw-spotlight-desc {
+    font-size: 1rem;
+    color: var(--color-text-muted);
+    margin-bottom: 20px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.aw-spotlight-meta {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    align-items: center;
+}
+
+/* Tick / Pill Badges */
+.tick {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3px 6px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-text);
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+.tick-item { background-color: var(--bg-secondary); border: 1px solid var(--color-primary); }
+.tick-sub { background-color: rgba(229, 9, 20, 0.2); border: 1px solid var(--color-primary); color: #ffeb3b; }
+.tick-dub { background-color: rgba(229, 9, 20, 0.4); border: 1px solid var(--color-primary); color: #fff; }
+.tick-eps { background-color: var(--color-primary); color: #fff; border: 1px solid var(--color-primary); }
+
+/* Trending Section */
+.aw-section-header {
+    font-size: 1.5rem;
+    color: var(--color-primary);
+    margin-bottom: 20px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+.aw-trending-wrapper {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding-bottom: 20px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-primary) var(--bg-secondary);
+}
+.aw-trending-card {
+    min-width: 200px;
+    height: 120px;
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    flex-shrink: 0;
+    background: var(--bg-secondary);
+    display: flex;
+    align-items: flex-end;
+}
+.aw-trending-card-img {
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    width: 60%;
+    background-size: cover;
+    background-position: center;
+    mask-image: linear-gradient(to right, transparent, black 40%);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 40%);
+}
+.aw-trending-rank {
+    position: absolute;
+    left: 10px;
+    bottom: -10px;
+    font-size: 5rem;
+    font-weight: 900;
+    color: rgba(255,255,255,0.1);
+    line-height: 1;
+    transition: 0.3s;
+}
+.aw-trending-card:hover .aw-trending-rank {
+    color: var(--color-primary);
+    transform: translateY(-5px);
+}
+.aw-trending-content {
+    position: relative;
+    z-index: 2;
+    padding: 15px;
+    width: 100%;
+}
+.aw-trending-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-text);
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Layout Split (Main vs Sidebar) */
+.aw-main-split {
+    display: flex;
+    gap: 30px;
+    margin-top: 30px;
+}
+.aw-content-left {
+    flex: 1;
+}
+.aw-sidebar-right {
+    width: 320px;
+    flex-shrink: 0;
+}
+@media (max-width: 1024px) {
+    .aw-main-split { flex-direction: column; }
+    .aw-sidebar-right { width: 100%; }
+    .aw-spotlight-content { max-width: 90%; }
+}
+
+/* Film Grid (Anime Cards) */
+.aw-film-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 20px;
+}
+.aw-film-card {
+    position: relative;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.aw-film-poster {
+    position: relative;
+    padding-top: 140%;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 10px;
+    background: var(--bg-secondary);
+}
+.aw-film-poster img {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s;
+}
+.aw-film-card:hover .aw-film-poster img {
+    transform: scale(1.05);
+}
+.aw-film-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.3);
+    opacity: 0;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+.aw-film-card:hover .aw-film-overlay {
+    opacity: 1;
+}
+.aw-film-play-btn {
+    width: 50px;
+    height: 50px;
+    background: var(--color-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    transform: scale(0.8);
+    transition: 0.3s;
+}
+.aw-film-card:hover .aw-film-play-btn {
+    transform: scale(1);
+}
+.aw-film-ticks {
+    position: absolute;
+    bottom: 8px; left: 8px;
+    display: flex;
+    gap: 4px;
+    z-index: 3;
+}
+.aw-film-detail {
+    display: flex;
+    flex-direction: column;
+}
+.aw-film-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.aw-film-meta {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Sidebar Top 10 */
+.aw-top10-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    cursor: pointer;
+}
+.aw-top10-item:hover { background: rgba(255,255,255,0.02); }
+.aw-top10-rank {
+    width: 30px;
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--color-text-muted);
+    text-align: center;
+}
+.aw-top10-item:nth-child(1) .aw-top10-rank { color: var(--color-primary); }
+.aw-top10-poster {
+    width: 50px;
+    height: 70px;
+    border-radius: 4px;
+    object-fit: cover;
+}
+.aw-top10-detail {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.aw-top10-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Generic Filters / Buttons */
+.aw-tabs {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+.aw-tab {
+    padding: 8px 16px;
+    background: var(--bg-secondary);
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: 0.2s;
+}
+.aw-tab.active, .aw-tab:hover {
+    background: var(--color-primary);
+    color: #fff;
+}
