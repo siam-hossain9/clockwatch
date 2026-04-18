@@ -400,7 +400,7 @@ const DetailPage = (() => {
                             ${anime.studios?.length ? `<p style="margin-bottom:12px;color:var(--color-text-muted);">Studio: ${anime.studios.map(s => s.name).join(', ')}</p>` : ''}
                             ${anime.producers?.length ? `<p style="margin-bottom:16px;color:var(--color-text-muted);">Producers: ${anime.producers.map(p => p.name).join(', ')}</p>` : ''}
                             <div class="detail-actions">
-                                <button class="btn btn-primary" onclick="DetailPage.watchAnime('${(anime.title_english || anime.title).replace(/'/g, "\\'")}')">
+                                <button class="btn btn-primary" onclick="DetailPage.watchAnime('${(anime.title_english || anime.title).replace(/'/g, "\\'")}', '${anime.year || (anime.aired?.from ? new Date(anime.aired.from).getFullYear() : '')}')">
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
                                     Watch Anime
                                 </button>
@@ -456,22 +456,37 @@ const DetailPage = (() => {
     // =============================================
     // Watch Anime - TMDB lookup + vidsrc embed
     // =============================================
-    async function watchAnime(title) {
+    async function watchAnime(title, year) {
         try {
-            // Search TMDB for the anime title (most anime are TV shows on TMDB)
-            const results = await API.TMDB.searchMulti(title);
-            const match = (results.results || []).find(r =>
-                (r.media_type === 'tv' || r.media_type === 'movie') &&
-                (r.genre_ids?.includes(16) || r.name?.toLowerCase().includes(title.toLowerCase().slice(0, 8)) || r.title?.toLowerCase().includes(title.toLowerCase().slice(0, 8)))
-            ) || results.results?.[0];
+            UI.showToast('Searching for anime stream...', 'info');
+
+            let match = null;
+            let type = 'tv';
+
+            // Try TV search with year
+            if (year) {
+                const res = await API.TMDB.searchTV(title, { first_air_date_year: year });
+                if (res.results && res.results.length > 0) match = res.results[0];
+            }
+
+            // Fallback TV search without year
+            if (!match) {
+                const tvRes = await API.TMDB.searchTV(title);
+                match = (tvRes.results || []).find(r => r.genre_ids?.includes(16)) || tvRes.results?.[0];
+            }
+
+            // Fallback to Movies
+            if (!match) {
+                const mvRes = await API.TMDB.searchMovies(title);
+                match = (mvRes.results || []).find(r => r.genre_ids?.includes(16)) || mvRes.results?.[0];
+                if (match) type = 'movie';
+            }
 
             if (match) {
-                const type = match.media_type === 'movie' ? 'movie' : 'tv';
                 const embedUrl = `https://vidsrc.to/embed/${type}/${match.id}`;
-                const displayTitle = match.title || match.name || title;
+                const displayTitle = match.name || match.title || title;
                 UI.openTrailerModal(embedUrl, true, displayTitle);
             } else {
-                // Fallback: try direct embed with title search
                 UI.showToast('Anime not found on streaming database. Try the trailer instead.', 'error');
             }
         } catch (err) {

@@ -91,6 +91,7 @@ const API = (() => {
         movieVideos: (id) => tmdb(`/movie/${id}/videos`),
         movieSimilar: (id, page = 1) => tmdb(`/movie/${id}/similar`, { page }),
         searchMovies: (query, page = 1) => tmdb('/search/movie', { query, page }),
+        searchTV: (query, params = {}) => tmdb('/search/tv', { query, ...params }),
         searchMulti: (query, page = 1) => tmdb('/search/multi', { query, page }),
         discoverMovies: (params = {}) => tmdb('/discover/movie', params),
         genreList: () => tmdb('/genre/movie/list'),
