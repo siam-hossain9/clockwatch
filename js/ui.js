@@ -602,12 +602,26 @@ const UI = (() => {
             ? videoKey // Full embed URL passed
             : `https://www.youtube.com/embed/${videoKey}?autoplay=1&rel=0`;
 
+        let serverSelector = '';
+        if (isEmbed && videoKey.includes('vidsrc.me')) {
+            serverSelector = `
+                <div class="server-switcher" style="margin-left:auto; display:flex; gap:8px;">
+                    <button class="btn btn-primary" style="padding:4px 12px; font-size:0.8rem;" onclick="document.getElementById('playback-iframe').src = '${videoKey}'">Server 1 (Fast)</button>
+                    <button class="btn btn-secondary" style="padding:4px 12px; font-size:0.8rem;" onclick="document.getElementById('playback-iframe').src = '${videoKey.replace('vidsrc.me', 'vidsrc.pm')}'">Server 2</button>
+                    <button class="btn btn-secondary" style="padding:4px 12px; font-size:0.8rem;" onclick="document.getElementById('playback-iframe').src = '${videoKey.replace('vidsrc.me', 'vidsrc.net')}'">Server 3</button>
+                </div>
+            `;
+        }
+
         modal.innerHTML = `
             <div class="modal-content trailer-modal ${isEmbed ? 'full-playback-modal' : ''}">
                 <button class="modal-close" aria-label="Close">&times;</button>
-                ${isEmbed ? `<div class="playback-header"><h2>Now Playing: ${title}</h2></div>` : ''}
+                ${isEmbed ? `<div class="playback-header" style="display:flex; align-items:center; width:100%; border-bottom:1px solid #333; padding-bottom:10px; margin-bottom:10px;">
+                    <h2 style="font-size:1.2rem; margin:0;">Now Playing: ${title}</h2>
+                    ${serverSelector}
+                </div>` : ''}
                 <div class="trailer-wrapper">
-                    <iframe src="${iframeSrc}" 
+                    <iframe id="playback-iframe" src="${iframeSrc}" 
                         frameborder="0" allowfullscreen allow="autoplay; encrypted-media" title="${isEmbed ? 'Full Video' : 'Trailer'}"></iframe>
                 </div>
             </div>
