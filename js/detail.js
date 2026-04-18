@@ -483,9 +483,8 @@ const DetailPage = (() => {
             }
 
             if (match) {
-                const embedUrl = `https://vidsrc.me/embed/${type}/${match.id}`;
                 const displayTitle = match.name || match.title || title;
-                UI.openTrailerModal(embedUrl, true, displayTitle);
+                await enterWatchMode(match.id, type, displayTitle);
             } else {
                 UI.showToast('Anime not found on streaming database. Try the trailer instead.', 'error');
             }
@@ -493,6 +492,141 @@ const DetailPage = (() => {
             console.error('Watch anime error:', err);
             UI.showToast('Failed to load anime stream. Please try again.', 'error');
         }
+    }
+
+    
+    // =============================================
+    // AniWatch-Style Dedicated Player Mode
+    // =============================================
+    async function enterWatchMode(tmdbId, type, displayTitle) {
+        window.scrollTo(0,0);
+        UI.showToast('Initializing Watch Player...', 'info');
+
+        const container = document.getElementById('detail-content');
+        if(container) container.style.display = 'none';
+
+        let watchW = document.getElementById('watch-mode-wrapper');
+        if(watchW) watchW.remove();
+
+        watchW = document.createElement('div');
+        watchW.id = 'watch-mode-wrapper';
+        
+        let seasonsListHTML = '';
+        let episodesHtml = '';
+        let currentSeason = 1;
+
+        if (type === 'tv') {
+            try {
+                const showDetails = await API.TMDB.fetchJSON(`/tv/${tmdbId}`);
+                const validSeasons = (showDetails.seasons || []).filter(s => s.season_number > 0);
+                
+                if (validSeasons.length > 0) {
+                    currentSeason = validSeasons[0].season_number;
+                    const seasonData = await API.TMDB.fetchJSON(`/tv/${tmdbId}/season/${currentSeason}`);
+                    const eps = seasonData.episodes || [];
+                    
+                    episodesHtml = eps.map(e => `
+                        <div class="watch-ep-item ${e.episode_number === 1 ? 'active' : ''}" 
+                             onclick="changeEpisode(this, ${currentSeason}, ${e.episode_number}, '${tmdbId}', 'tv')">
+                            <span class="watch-ep-num">${e.episode_number}</span>
+                            <span class="watch-ep-title">${e.name}</span>
+                        </div>`).join('');
+
+                    seasonsListHTML = validSeasons.map(s => `
+                        <div class="watch-season-card ${s.season_number === currentSeason ? 'active' : ''}"
+                             onclick="loadSeason(${s.season_number}, '${tmdbId}', this)">
+                            Season ${s.season_number}
+                        </div>`).join('');
+                }
+            } catch(e) { console.error('Season fetch err', e); }
+        }
+
+        const baseUrl = type === 'tv' ? `https://vidsrc.me/embed/tv/${tmdbId}/${currentSeason}/1` : `https://vidsrc.me/embed/movie/${tmdbId}`;
+        
+        watchW.innerHTML = `
+            <div class="watch-layout-split">
+                ${type === 'tv' ? `
+                <div class="watch-sidebar">
+                    <div class="watch-sidebar-header">
+                        <span id="watch-season-title">List of episodes: S${currentSeason}</span>
+                    </div>
+                    <div class="watch-eps-list" id="watch-eps-list">
+                        ${episodesHtml || '<div style="padding:20px;color:#888;">No episode data</div>'}
+                    </div>
+                </div>` : ''}
+
+                <div class="watch-main">
+                    <div class="watch-player-wrap">
+                        <iframe id="main-player-iframe" src="${baseUrl}" frameborder="0" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+                    </div>
+                    <div class="watch-servers">
+                        <div class="server-group">
+                            <span class="server-label">Servers:</span>
+                            <button class="server-btn active" onclick="switchServer('vidsrc.me', this)">VidSrc</button>
+                            <button class="server-btn" onclick="switchServer('vidsrc.pm', this)">MegaCloud (Alt)</button>
+                            <button class="server-btn" onclick="switchServer('vidsrc.net', this)">T-Cloud (Alt)</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            ${seasonsListHTML ? `
+            <div class="watch-more-seasons">
+                <h3 style="color:var(--color-primary); margin-bottom:15px; padding-left: 20px;">More Seasons</h3>
+                <div class="watch-season-grid" id="watch-season-grid">
+                    ${seasonsListHTML}
+                </div>
+            </div>` : ''}
+            
+            <button class="btn btn-outline" style="margin: 20px;" onclick="exitWatchMode()">← Back to Details</button>
+        `;
+        
+        document.querySelector('.page-content').appendChild(watchW);
+    }
+    
+    window.changeEpisode = function(element, seasonNum, epNum, tmdbId, type) {
+        document.querySelectorAll('.watch-ep-item').forEach(e => e.classList.remove('active'));
+        element.classList.add('active');
+        
+        const activeSrv = document.querySelector('.server-btn.active').textContent.includes('VidSrc') ? 'vidsrc.me' : 
+                         document.querySelector('.server-btn.active').textContent.includes('Mega') ? 'vidsrc.pm' : 'vidsrc.net';
+                         
+        document.getElementById('main-player-iframe').src = `https://${activeSrv}/embed/${type}/${tmdbId}/${seasonNum}/${epNum}`;
+    }
+
+    window.switchServer = function(domain, element) {
+        document.querySelectorAll('.server-btn').forEach(e => e.classList.remove('active'));
+        element.classList.add('active');
+        const iframe = document.getElementById('main-player-iframe');
+        iframe.src = iframe.src.replace(/vidsrc\.[a-z]+/, domain);
+    }
+    
+    window.exitWatchMode = function() {
+        document.getElementById('watch-mode-wrapper').remove();
+        document.getElementById('detail-content').style.display = 'block';
+        window.scrollTo(0,0);
+    }
+
+    window.loadSeason = async function(seasonNum, tmdbId, element) {
+        document.querySelectorAll('.watch-season-card').forEach(e => e.classList.remove('active'));
+        element.classList.add('active');
+        document.getElementById('watch-season-title').textContent = `List of episodes: S${seasonNum}`;
+        
+        const list = document.getElementById('watch-eps-list');
+        list.innerHTML = '<div style="padding:20px;color:#888;">Loading...</div>';
+        
+        try {
+            const seasonData = await API.TMDB.fetchJSON(`/tv/${tmdbId}/season/${seasonNum}`);
+            const eps = seasonData.episodes || [];
+            list.innerHTML = eps.map(e => `
+                <div class="watch-ep-item ${e.episode_number === 1 ? 'active' : ''}" 
+                     onclick="changeEpisode(this, ${seasonNum}, ${e.episode_number}, '${tmdbId}', 'tv')">
+                    <span class="watch-ep-num">${e.episode_number}</span>
+                    <span class="watch-ep-title">${e.name}</span>
+                </div>`).join('');
+            
+            list.querySelector('.watch-ep-item')?.click();
+        } catch(e) { list.innerHTML = '<div style="padding:20px;color:#888;">Failed to load</div>'; }
     }
 
     return { init, watchAnime };

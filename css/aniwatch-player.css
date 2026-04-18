@@ -1,0 +1,163 @@
+/* aniwatch-player.css - Full Watch Mode Layout */
+
+#watch-mode-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 1600px;
+    margin: 80px auto 0;
+    background: var(--bg-primary);
+    animation: fadeIn 0.4s ease-out;
+}
+
+.watch-layout-split {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    height: calc(100vh - 120px);
+    max-height: 800px;
+}
+
+/* Sidebar: Episodes */
+.watch-sidebar {
+    width: 320px;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.watch-sidebar-header {
+    background: #111;
+    padding: 15px;
+    font-weight: 700;
+    color: var(--color-primary);
+    border-bottom: 2px solid #222;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.watch-eps-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-primary) var(--bg-secondary);
+}
+.watch-ep-item {
+    padding: 12px 15px;
+    margin-bottom: 5px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.03);
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: flex;
+    gap: 10px;
+    transition: 0.2s;
+    user-select: none;
+}
+.watch-ep-item:hover, .watch-ep-item.active {
+    background: var(--color-primary);
+    color: #fff;
+}
+.watch-ep-num {
+    opacity: 0.8;
+    width: 25px;
+}
+.watch-ep-title {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Main Video */
+.watch-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+}
+.watch-player-wrap {
+    flex: 1;
+    position: relative;
+    width: 100%;
+}
+.watch-player-wrap iframe {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+}
+
+/* Server Console */
+.watch-servers {
+    background: #111;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.server-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.server-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #ffc107; /* Aniwatch yellow */
+    text-transform: uppercase;
+}
+.server-btn {
+    background: rgba(255,255,255,0.1);
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: 0.2s;
+}
+.server-btn:hover, .server-btn.active {
+    background: var(--color-primary);
+}
+
+/* More Seasons Below */
+.watch-more-seasons {
+    padding: 20px;
+    margin-top: 10px;
+}
+.watch-season-grid {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+}
+.watch-season-card {
+    background: var(--bg-secondary);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 15px;
+    border-radius: 8px;
+    min-width: 180px;
+    cursor: pointer;
+    transition: 0.3s;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+.watch-season-card:hover { border-color: var(--color-primary); background: rgba(229,9,20,0.1); }
+.watch-season-card.active { border-color: var(--color-primary); color: var(--color-primary); }
+
+@media (max-width: 900px) {
+    .watch-layout-split {
+        flex-direction: column-reverse;
+        height: auto;
+        max-height: none;
+    }
+    .watch-sidebar { width: 100%; height: 350px; }
+    .watch-main { height: 300px; }
+    .watch-servers { flex-wrap: wrap; }
+}
