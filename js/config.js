@@ -32,9 +32,9 @@ const CONFIG = {
         BASE_URL: 'https://api.tvmaze.com',
     },
 
-    // Jikan API Configuration (MyAnimeList)
+    // Jikan API backend via Vercel Reverse Proxy
     JIKAN: {
-        BASE_URL: 'https://api.jikan.moe/v4',
+        BASE_URL: '/api/proxy/jikan',
     },
 
     // AniList API Configuration (GraphQL)

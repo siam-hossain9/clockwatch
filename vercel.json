@@ -1,6 +1,7 @@
 {
     "cleanUrls": false,
     "rewrites": [
+        { "source": "/api/proxy/jikan/(.*)", "destination": "https://api.jikan.moe/v4/$1" },
         { "source": "/(.*)", "destination": "/$1" }
     ],
     "headers": [
