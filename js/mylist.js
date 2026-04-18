@@ -1,10 +1,10 @@
 /**
- * CLOCKWATCH - My List / Watchlist Module
+ * Dororo - My List / Watchlist Module
  * Handles localStorage-based watchlist with add/remove/toggle
  */
 
 const MyList = (() => {
-    const STORAGE_KEY = 'clockwatch_mylist';
+    const STORAGE_KEY = 'dororo_mylist';
 
     function getAll() {
         try {

@@ -364,7 +364,6 @@ const UI = (() => {
                             <li><a href="https://www.omdbapi.com" target="_blank" rel="noopener">OMDB</a></li>
                             <li><a href="https://www.tvmaze.com" target="_blank" rel="noopener">TVMaze</a></li>
                             <li><a href="https://jikan.moe" target="_blank" rel="noopener">Jikan (MAL)</a></li>
-                            <li><a href="https://anilist.co" target="_blank" rel="noopener">AniList</a></li>
                         </ul>
                     </div>
                 </div>
@@ -413,12 +412,6 @@ const UI = (() => {
             year = item.year || (item.aired?.from ? new Date(item.aired.from).getFullYear() : '');
             rating = item.score ? item.score.toFixed(1) : 'N/A';
             detailUrl = `detail.html?type=anime&id=${item.mal_id}`;
-        } else if (type === 'anilist') {
-            posterUrl = API.ANILIST.imgUrl(item);
-            title = API.ANILIST.titleText(item);
-            year = item.seasonYear || item.startDate?.year || '';
-            rating = item.averageScore ? (item.averageScore / 10).toFixed(1) : 'N/A';
-            detailUrl = `detail.html?type=anilist&id=${item.id}`;
         }
 
         ratingColor = getRatingColor(parseFloat(rating));
@@ -449,7 +442,7 @@ const UI = (() => {
                 </div>
             </a>
             <button class="card-bookmark" aria-label="Add to My List" onclick="event.preventDefault();event.stopPropagation();MyList.toggle({id:'${type === 'anime' ? item.mal_id : item.id}',type:'${type}',title:'${title.replace(/'/g, "\\'")}',poster:'${posterUrl.replace(/'/g, "\\'")}',rating:'${rating}',year:'${year}'}, this)">
-                ${MyList.has(type === 'anilist' ? item.id : (type === 'anime' ? item.mal_id : item.id), type) ? '✓' : '+'}
+                ${MyList.has(type === 'anime' ? item.mal_id : item.id, type) ? '✓' : '+'}
             </button>
         `;
 

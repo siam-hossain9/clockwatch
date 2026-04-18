@@ -1,5 +1,5 @@
 /**
- * CLOCKWATCH - Centralized API Module
+ * Dororo - Centralized API Module
  * Handles all API calls with caching, rate limiting, and error handling
  */
 

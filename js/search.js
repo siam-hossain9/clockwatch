@@ -1,5 +1,5 @@
 /**
- * CLOCKWATCH - Search Page Logic
+ * Dororo - Search Page Logic
  * Multi-API search across TMDB, TVMaze, and Jikan
  */
 
@@ -53,11 +53,10 @@ const SearchPage = (() => {
         searchResults = { movies: [], tv: [], anime: [], anilist: [] };
 
         // Search all APIs in parallel
-        const [tmdbRes, tvmazeRes, jikanRes, anilistRes] = await Promise.allSettled([
+        const [tmdbRes, tvmazeRes, jikanRes] = await Promise.allSettled([
             API.TMDB.searchMovies(query),
             API.TVMAZE.search(query),
             API.JIKAN.searchAnime(query),
-            API.ANILIST.search(query),
         ]);
 
         if (tmdbRes.status === 'fulfilled') {
@@ -68,9 +67,6 @@ const SearchPage = (() => {
         }
         if (jikanRes.status === 'fulfilled') {
             searchResults.anime = jikanRes.value.data || [];
-        }
-        if (anilistRes.status === 'fulfilled') {
-            searchResults.anilist = anilistRes.value?.data?.Page?.media || [];
         }
 
         renderResults();
@@ -98,12 +94,7 @@ const SearchPage = (() => {
 
         if (showAnime && searchResults.anime.length > 0) {
             hasResults = true;
-            container.innerHTML += renderSection('Anime (MAL)', searchResults.anime, 'anime');
-        }
-
-        if (showAnime && searchResults.anilist.length > 0) {
-            hasResults = true;
-            container.innerHTML += renderSection('Anime (AniList)', searchResults.anilist, 'anilist');
+            container.innerHTML += renderSection('Anime', searchResults.anime, 'anime');
         }
 
         if (!hasResults) {

@@ -94,13 +94,12 @@ const App = (() => {
             UI.createContentRow('Popular Movies', 'row-popular'),
             UI.createContentRow('Popular TV Shows', 'row-tv'),
             UI.createContentRow('Top Anime', 'row-anime'),
-            UI.createContentRow('Trending Anime', 'row-anilist-trending'),
+            UI.createContentRow('Popular Anime', 'row-anime-popular'),
             UI.createContentRow('Top Rated Movies', 'row-toprated'),
             UI.createContentRow('Action Movies', 'row-action'),
             UI.createContentRow('Comedy Movies', 'row-comedy'),
             UI.createContentRow('Horror Movies', 'row-horror'),
             UI.createContentRow('Seasonal Anime', 'row-seasonal'),
-            UI.createContentRow('Popular Anime', 'row-anilist-popular'),
             UI.createContentRow('Airing Today', 'row-airing'),
         ].join('');
 
@@ -115,6 +114,7 @@ const App = (() => {
         // Anime
         setTimeout(() => loadAnimeRow('row-anime', () => API.JIKAN.topAnime()), 800);
         setTimeout(() => loadAnimeRow('row-seasonal', () => API.JIKAN.seasonNow()), 1200);
+        setTimeout(() => loadAnimeRow('row-anime-popular', () => API.JIKAN.topAnime(1, 'bypopularity')), 1600);
 
         // Genre rows
         setTimeout(() => loadRow('row-action', () => API.TMDB.moviesByGenre(CONFIG.GENRES.ACTION), 'movie'), 500);
@@ -123,10 +123,6 @@ const App = (() => {
 
         // Airing Today
         setTimeout(() => loadAiringRow('row-airing'), 1000);
-
-        // AniList rows
-        setTimeout(() => loadAniListRow('row-anilist-trending', () => API.ANILIST.trending()), 600);
-        setTimeout(() => loadAniListRow('row-anilist-popular', () => API.ANILIST.popular()), 1100);
     }
 
     async function loadRow(containerId, fetchFn, type) {

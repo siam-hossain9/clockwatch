@@ -1,5 +1,5 @@
 /**
- * CLOCKWATCH - Detail Page Logic
+ * Dororo - Detail Page Logic
  * Dynamic detail page for Movies, TV Shows, and Anime
  */
 
@@ -31,7 +31,7 @@ const DetailPage = (() => {
             case 'tv': await loadTVDetailTMDB(); break;
             case 'tvmaze': await loadTVMazeDetail(); break;
             case 'anime': await loadAnimeDetail(); break;
-            case 'anilist': await loadAniListDetail(); break;
+
             default: await loadMovieDetail();
         }
 
@@ -451,111 +451,7 @@ const DetailPage = (() => {
         }
     }
 
-    // =============================================
-    // AniList Detail
-    // =============================================
-    async function loadAniListDetail() {
-        const container = document.getElementById('detail-content');
-        container.innerHTML = `<div class="loading-spinner" style="padding-top:200px;"><div class="spinner"></div></div>`;
 
-        try {
-            const res = await API.ANILIST.details(parseInt(contentId));
-            const anime = res.data.Media;
-            const title = API.ANILIST.titleText(anime);
-            document.title = `${title} - Dororo`;
-
-            const backdrop = API.ANILIST.bannerUrl(anime);
-            const poster = API.ANILIST.imgUrl(anime);
-            const score = anime.averageScore ? (anime.averageScore / 10).toFixed(1) : 'N/A';
-            const year = anime.seasonYear || anime.startDate?.year || '';
-            const studio = anime.studios?.nodes?.[0]?.name || '';
-            const description = (anime.description || '').replace(/<[^>]+>/g, '');
-
-            // Characters
-            const characters = anime.characters?.nodes || [];
-            const charEdges = anime.characters?.edges || [];
-
-            // Recommendations
-            const recs = (anime.recommendations?.nodes || []).filter(r => r.mediaRecommendation).slice(0, 12);
-
-            container.innerHTML = `
-                <div class="detail-hero">
-                    <div class="hero-backdrop" style="background-image:url('${backdrop}')"></div>
-                    <div class="hero-gradient"></div>
-                </div>
-                <div class="detail-main">
-                    <div class="detail-top">
-                        <div class="detail-poster">
-                            <img src="${poster}" alt="${title}" onerror="this.src='${CONFIG.PLACEHOLDER_IMG}'" />
-                        </div>
-                        <div class="detail-info">
-                            <h1 class="detail-title">${title}</h1>
-                            ${anime.title?.native ? `<p class="detail-tagline">${anime.title.native}</p>` : ''}
-                            <div class="detail-ratings">
-                                <div class="rating-badge"><span style="color:var(--color-gold)">★</span><span>${score}</span><span class="rating-label">AniList</span></div>
-                                ${anime.popularity ? `<div class="rating-badge"><span>Pop:</span><span>#${anime.popularity}</span><span class="rating-label"></span></div>` : ''}
-                            </div>
-                            <div class="detail-meta-row">
-                                ${anime.format ? `<span class="meta-tag">${anime.format}</span>` : ''}
-                                ${anime.episodes ? `<span class="meta-tag">Eps: ${anime.episodes}</span>` : ''}
-                                ${anime.duration ? `<span class="meta-tag">Time: ${anime.duration} min</span>` : ''}
-                                ${anime.status ? `<span class="meta-tag">${anime.status}</span>` : ''}
-                                ${anime.season && year ? `<span class="meta-tag">${anime.season} ${year}</span>` : ''}
-                                ${(anime.genres || []).map(g => `<span class="meta-tag">${g}</span>`).join('')}
-                            </div>
-                            <p class="detail-overview">${description}</p>
-                            ${studio ? `<p style="margin-bottom:12px;color:var(--color-text-muted);">Studio: ${studio}</p>` : ''}
-                            <div class="detail-actions">
-                                <button class="btn btn-primary" onclick="DetailPage.watchAnime('${title.replace(/'/g, "\\'")}')">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
-                                    Watch Anime
-                                </button>
-                                ${anime.trailer?.id && anime.trailer?.site === 'youtube' ? `<button class="btn btn-secondary" onclick="UI.openTrailerModal('${anime.trailer.id}')">
-                                    Trailer
-                                </button>` : ''}
-                                <button class="btn btn-secondary" onclick="MyList.toggle({id:'${anime.id}',type:'anilist',title:'${title.replace(/'/g, "\\'")}',poster:'${poster}',rating:'${score}',year:'${year}'}, this)">
-                                    ${MyList.has(anime.id, 'anilist') ? '✓ In My List' : '+ Add to List'}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    ${characters.length > 0 ? `
-                    <div class="detail-section">
-                        <h2 class="detail-section-title">Characters</h2>
-                        <div class="cast-list">${characters.map((c, i) => `
-                            <div class="cast-card">
-                                <img src="${c.image?.large || c.image?.medium || CONFIG.PLACEHOLDER_PROFILE}" alt="${c.name?.full || ''}" loading="lazy" onerror="this.src='${CONFIG.PLACEHOLDER_PROFILE}'" />
-                                <div class="cast-name">${c.name?.full || ''}</div>
-                                <div class="cast-character">${charEdges[i]?.role || ''}</div>
-                            </div>`).join('')}
-                        </div>
-                    </div>` : ''}
-
-                    ${recs.length > 0 ? `
-                    <div class="detail-section">
-                        <h2 class="detail-section-title">Recommendations</h2>
-                        <div class="content-grid">${recs.map(r => {
-                            const rec = r.mediaRecommendation;
-                            return `<div class="content-card">
-                                <a href="detail.html?type=anilist&id=${rec.id}" class="card-link">
-                                    <div class="card-poster">
-                                        <img src="${rec.coverImage?.large || CONFIG.PLACEHOLDER_IMG}" alt="${rec.title?.english || rec.title?.romaji}" loading="lazy" onerror="this.src='${CONFIG.PLACEHOLDER_IMG}'" />
-                                    </div>
-                                    <div class="card-details">
-                                        <h3 class="card-title">${rec.title?.english || rec.title?.romaji}</h3>
-                                    </div>
-                                </a>
-                            </div>`;
-                        }).join('')}</div>
-                    </div>` : ''}
-                </div>
-            `;
-        } catch (err) {
-            console.error('AniList detail error:', err);
-            UI.showError(container, 'Failed to load anime details from AniList.', () => loadAniListDetail());
-        }
-    }
 
     // =============================================
     // Watch Anime - TMDB lookup + vidsrc embed
