@@ -490,6 +490,9 @@ const DetailPage = (() => {
             }
         } catch (err) {
             console.error('Watch anime error:', err);
+            // Restore detail-content visibility if watch mode failed
+            const container = document.getElementById('detail-content');
+            if (container) container.style.display = 'block';
             UI.showToast('Failed to load anime stream. Please try again.', 'error');
         }
     }

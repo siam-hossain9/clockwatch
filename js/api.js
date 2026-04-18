@@ -100,6 +100,8 @@ const API = (() => {
         imgUrl: (path, size = 'w500') => path ? `${CONFIG.TMDB.IMG_URL}/${size}${path}` : CONFIG.PLACEHOLDER_IMG,
         backdropUrl: (path) => path ? `${CONFIG.TMDB.BACKDROP_URL}${path}` : CONFIG.PLACEHOLDER_BACKDROP,
         profileUrl: (path) => path ? `${CONFIG.TMDB.PROFILE}${path}` : CONFIG.PLACEHOLDER_PROFILE,
+        // Generic TMDB endpoint fetcher (used by Watch Mode for season/episode data)
+        fetchJSON: (endpoint, params = {}) => tmdb(endpoint, params),
     };
 
     // =============================================
@@ -141,6 +143,8 @@ const API = (() => {
                 .sort((a, b) => (b.rating.average || 0) - (a.rating.average || 0))
                 .slice(0, 20);
         },
+        // Generic TVMaze fetcher (used by Watch Mode for episode lists)
+        fetchJSON: (endpoint) => tvmaze(endpoint),
     };
 
     // =============================================
