@@ -4,93 +4,137 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Discover popular TV shows, currently airing series, and show schedules on Dororo.">
-    <meta property="og:title" content="TV Shows - Dororo">
-    <meta property="og:description" content="Explore top-rated television series on Dororo.">
-    <meta property="og:type" content="website">
-    <meta name="theme-color" content="#E50914">
-    <title>TV Shows - Dororo</title>
+    <title>TV Shows - Dororo (AniWatch Theme)</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' font-family='Arial' fill='%23E50914'>D</text></svg>">
-    <link rel="stylesheet" href="css/style.css?v=4">
-    <link rel="stylesheet" href="css/animations.css?v=4">
-    <link rel="stylesheet" href="css/responsive.css?v=4">
+    <link rel="stylesheet" href="css/style.css?v=9">
+    <link rel="stylesheet" href="css/animations.css?v=9">
+    <link rel="stylesheet" href="css/aniwatch.css?v=9">
 </head>
 <body>
     <nav id="main-nav" aria-label="Main navigation"></nav>
 
-    <main class="page-content">
-        <section class="hero" id="hero" aria-label="Featured TV show">
-            <div class="hero-backdrop" style="background:var(--bg-primary)"></div>
-            <div class="hero-gradient"></div>
-        </section>
+    <div class="aw-container">
+        
+        <!-- Spotlight Hero -->
+        <div id="awSpotlight" class="aw-spotlight">
+            <div class="aw-spotlight-bg" style="background-image: url('assets/placeholder-backdrop.svg')"></div>
+            <div class="aw-spotlight-content skeleton-shimmer" style="height:200px; width:50%; border-radius:8px;"></div>
+        </div>
 
-        <div class="page-header">
-            <h1 class="page-title">TV Shows</h1>
-            <div class="filter-bar" id="filterBar">
-                <select class="filter-select" id="genreFilter" aria-label="Filter by genre">
-                    <option value="">All Genres</option>
-                    <option value="Action">Action</option>
-                    <option value="Comedy">Comedy</option>
-                    <option value="Drama">Drama</option>
-                    <option value="Crime">Crime</option>
-                    <option value="Fantasy">Fantasy</option>
-                    <option value="Horror">Horror</option>
-                    <option value="Romance">Romance</option>
-                    <option value="Science-Fiction">Sci-Fi</option>
-                    <option value="Thriller">Thriller</option>
-                </select>
-                <select class="filter-select" id="statusFilter" aria-label="Filter by status">
-                    <option value="">All Status</option>
-                    <option value="Running">Running</option>
-                    <option value="Ended">Ended</option>
-                    <option value="To Be Determined">TBD</option>
-                </select>
+        <!-- Trending -->
+        <h2 class="aw-section-header">Trending Shows</h2>
+        <div id="awTrending" class="aw-trending-wrapper">
+            <div class="skeleton-shimmer" style="min-width:200px;height:120px;border-radius:8px;"></div>
+            <div class="skeleton-shimmer" style="min-width:200px;height:120px;border-radius:8px;"></div>
+            <div class="skeleton-shimmer" style="min-width:200px;height:120px;border-radius:8px;"></div>
+        </div>
+
+        <!-- Split Layout -->
+        <div class="aw-main-split">
+            <!-- Main Content -->
+            <div class="aw-content-left">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                    <h2 class="aw-section-header" style="margin:0;">TV Shows Library</h2>
+                    <div class="aw-tabs">
+                        <select id="genreFilter" class="filter-select" style="background:var(--bg-secondary); border:none; padding:8px 12px; color:#fff; border-radius:4px; font-weight:bold;">
+                            <option value="">All Genres</option>
+                            <option value="Action">Action</option>
+                            <option value="Comedy">Comedy</option>
+                            <option value="Drama">Drama</option>
+                            <option value="Crime">Crime</option>
+                            <option value="Sci-Fi">Sci-Fi</option>
+                        </select>
+                        <select id="statusFilter" class="filter-select" style="background:var(--bg-secondary); border:none; padding:8px 12px; color:#fff; border-radius:4px; font-weight:bold;">
+                            <option value="">All Status</option>
+                            <option value="Running">Running</option>
+                            <option value="Ended">Ended</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="aw-film-grid" id="awGrid">
+                    <!-- Cards -->
+                </div>
+                <div style="text-align:center; padding: 30px 0;">
+                    <button class="btn btn-outline" id="loadMoreBtn">Load More</button>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="aw-sidebar-right">
+                <h2 class="aw-section-header">Top Rated Series</h2>
+                <div id="awSidebarList">
+                    <!-- List -->
+                </div>
             </div>
         </div>
 
-        <div class="content-grid" id="tvGrid">
-            <!-- Cards loaded by JS -->
-        </div>
-
-        <div class="load-more-container" id="loadMoreContainer">
-            <button class="btn btn-outline" id="loadMoreBtn">Load More</button>
-        </div>
-    </main>
+    </div>
 
     <footer id="main-footer" aria-label="Footer"></footer>
 
-    <script src="js/config.js?v=4"></script>
-    <script src="js/api.js?v=4"></script>
-    <script src="js/mylist.js?v=4"></script>
-    <script src="js/ui.js?v=4"></script>
+    <script src="js/config.js?v=9"></script>
+    <script src="js/api.js?v=9"></script>
+    <script src="js/mylist.js?v=9"></script>
+    <script src="js/ui.js?v=9"></script>
     <script>
-    const TVShowsPage = (() => {
+    const AwThemeTV = (() => {
         let allShows = [];
         let currentPage = 0;
-        let isLoading = false;
         let currentGenre = '';
         let currentStatus = '';
         let displayedCount = 0;
         const ITEMS_PER_PAGE = 24;
 
+        function createAwCard(show) {
+            const title = show.name;
+            const poster = show.image ? (show.image.medium || show.image.original) : 'assets/placeholder-poster.svg';
+            const status = show.status === 'Running' ? 'ON-AIR' : 'ENDED';
+            const isEnded = show.status === 'Ended';
+            const runtime = show.runtime || show.averageRuntime || '?';
+            const score = show.rating?.average ? show.rating.average.toFixed(1) : 'N/A';
+
+            const div = document.createElement('div');
+            div.className = 'aw-film-card';
+            div.onclick = () => window.location.href = `detail.html?type=tvmaze&id=${show.id}`;
+            div.innerHTML = `
+                <div class="aw-film-poster">
+                    <img src="${poster}" alt="${title}" loading="lazy" onerror="this.src='assets/placeholder-poster.svg'" />
+                    <div class="aw-film-overlay">
+                        <div class="aw-film-play-btn"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg></div>
+                    </div>
+                    <div class="aw-film-ticks">
+                        <div class="tick tick-eps" style="background:${isEnded ? '#777' : '#E50914'}">${status}</div>
+                        <div class="tick tick-sub" style="color:#fff;">${runtime}m</div>
+                    </div>
+                </div>
+                <div class="aw-film-detail">
+                    <h3 class="aw-film-title" title="${title}">${title}</h3>
+                    <div class="aw-film-meta">
+                        <span>TV Series</span>
+                        <span><span style="color:var(--color-gold);">★</span> ${score}</span>
+                    </div>
+                </div>
+            `;
+            return div;
+        }
+
         async function init() {
             UI.renderNav('tvshows');
             UI.renderFooter();
-            UI.initBackToTop();
 
-            await loadInitialShows();
-            loadHero();
+            await loadInitialData();
+            loadSpotlight();
+            loadTrending();
+            loadSidebar();
 
-            document.getElementById('genreFilter')?.addEventListener('change', () => { currentGenre = document.getElementById('genreFilter').value; filterAndDisplay(); });
-            document.getElementById('statusFilter')?.addEventListener('change', () => { currentStatus = document.getElementById('statusFilter').value; filterAndDisplay(); });
+            document.getElementById('genreFilter')?.addEventListener('change', (e) => { currentGenre = e.target.value; filterAndDisplay(); });
+            document.getElementById('statusFilter')?.addEventListener('change', (e) => { currentStatus = e.target.value; filterAndDisplay(); });
             document.getElementById('loadMoreBtn')?.addEventListener('click', loadMoreShows);
         }
 
-        async function loadInitialShows() {
-            const grid = document.getElementById('tvGrid');
-            grid.innerHTML = UI.generateSkeletonGrid(18);
-
+        async function loadInitialData() {
             try {
-                // Load multiple pages for better selection
                 const [p0, p1, p2] = await Promise.allSettled([
                     API.TVMAZE.allShows(0),
                     API.TVMAZE.allShows(1),
@@ -101,22 +145,56 @@
                         allShows.push(...r.value);
                     }
                 });
-
-                // Sort by rating
-                allShows.sort((a, b) => (b.rating?.average || 0) - (a.rating?.average || 0));
+                
+                // Keep base pool sorted loosely by popularity/weight generally
+                allShows.sort((a,b) => (b.weight||0) - (a.weight||0));
                 filterAndDisplay();
-            } catch (err) {
-                UI.showError(grid, 'Failed to load TV shows', () => loadInitialShows());
+            } catch (err) {}
+        }
+
+        function loadSpotlight() {
+            const topShows = [...allShows].sort((a,b) => (b.rating?.average||0) - (a.rating?.average||0));
+            if (topShows.length > 0) {
+                const hero = topShows[Math.floor(Math.random() * Math.min(5, topShows.length))];
+                const bg = hero.image ? hero.image.original : 'assets/placeholder-backdrop.svg';
+                const desc = hero.summary ? hero.summary.replace(/<[^>]+>/g, '').split('. ')[0] + '.' : '';
+                
+                document.getElementById('awSpotlight').innerHTML = `
+                    <div class="aw-spotlight-bg" style="background-image: url('${bg}')"></div>
+                    <div class="aw-spotlight-content">
+                        <h1 class="aw-spotlight-title">${hero.name}</h1>
+                        <div class="aw-spotlight-meta">
+                            <div class="tick tick-item"><i class="fa fa-play-circle"></i> TV</div>
+                            <div class="tick tick-eps" style="background:${hero.status==='Running'?'#E50914':'#777'}">${hero.status==='Running'?'ON-AIR':'ENDED'}</div>
+                            <div class="tick tick-sub" style="color:white;">${hero.runtime || hero.averageRuntime || '?'}m</div>
+                        </div>
+                        <p class="aw-spotlight-desc">${desc}</p>
+                        <button class="btn btn-primary" onclick="window.location.href='detail.html?type=tvmaze&id=${hero.id}'">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg> Watch Now
+                        </button>
+                    </div>
+                `;
             }
         }
 
-        function loadHero() {
-            const heroEl = document.getElementById('hero');
-            const topShows = allShows.filter(s => s.image && s.rating?.average > 7);
-            if (topShows.length > 0) {
-                const random = topShows[Math.floor(Math.random() * Math.min(5, topShows.length))];
-                UI.renderHero(heroEl, random, 'tvmaze');
-            }
+        function loadTrending() {
+            const wrap = document.getElementById('awTrending');
+            const trending = [...allShows].sort((a,b) => (b.weight||0) - (a.weight||0)).slice(0,10);
+            wrap.innerHTML = '';
+            
+            trending.forEach((show, index) => {
+                const card = document.createElement('div');
+                card.className = 'aw-trending-card';
+                card.onclick = () => window.location.href = `detail.html?type=tvmaze&id=${show.id}`;
+                card.innerHTML = `
+                    <div class="aw-trending-card-img" style="background-image: url('${show.image?.original || show.image?.medium}')"></div>
+                    <div class="aw-trending-rank">${String(index+1).padStart(2, '0')}</div>
+                    <div class="aw-trending-content">
+                        <h3 class="aw-trending-title">${show.name}</h3>
+                    </div>
+                `;
+                wrap.appendChild(card);
+            });
         }
 
         function getFilteredShows() {
@@ -129,31 +207,56 @@
 
         function filterAndDisplay() {
             displayedCount = 0;
-            const grid = document.getElementById('tvGrid');
+            const grid = document.getElementById('awGrid');
             grid.innerHTML = '';
+            
             const filtered = getFilteredShows();
+            filtered.sort((a, b) => (b.rating?.average || 0) - (a.rating?.average || 0)); // Sort views by rating
+            
             const batch = filtered.slice(0, ITEMS_PER_PAGE);
-            batch.forEach(show => grid.appendChild(UI.createMovieCard(show, 'tvmaze')));
+            batch.forEach(show => grid.appendChild(createAwCard(show)));
             displayedCount = batch.length;
 
-            document.getElementById('loadMoreBtn').style.display =
-                displayedCount >= filtered.length ? 'none' : '';
+            document.getElementById('loadMoreBtn').style.display = displayedCount >= filtered.length ? 'none' : '';
         }
 
         function loadMoreShows() {
-            const grid = document.getElementById('tvGrid');
+            const grid = document.getElementById('awGrid');
             const filtered = getFilteredShows();
             const batch = filtered.slice(displayedCount, displayedCount + ITEMS_PER_PAGE);
-            batch.forEach(show => grid.appendChild(UI.createMovieCard(show, 'tvmaze')));
+            batch.forEach(show => grid.appendChild(createAwCard(show)));
             displayedCount += batch.length;
 
-            document.getElementById('loadMoreBtn').style.display =
-                displayedCount >= filtered.length ? 'none' : '';
+            document.getElementById('loadMoreBtn').style.display = displayedCount >= filtered.length ? 'none' : '';
+        }
+
+        function loadSidebar() {
+            const list = document.getElementById('awSidebarList');
+            const topItems = [...allShows].sort((a,b) => (b.rating?.average||0) - (a.rating?.average||0)).slice(0, 10);
+            list.innerHTML = '';
+
+            topItems.forEach((show, index) => {
+                const item = document.createElement('div');
+                item.className = 'aw-top10-item';
+                item.onclick = () => window.location.href = `detail.html?type=tvmaze&id=${show.id}`;
+                item.innerHTML = `
+                    <div class="aw-top10-rank">${String(index+1).padStart(2, '0')}</div>
+                    <img class="aw-top10-poster" src="${show.image?.medium}" onerror="this.src='assets/placeholder-poster.svg'">
+                    <div class="aw-top10-detail">
+                        <h4 class="aw-top10-title">${show.name}</h4>
+                        <div class="aw-film-meta">
+                            <span><span style="color:var(--color-gold);">★</span> ${show.rating?.average ? show.rating.average.toFixed(1) : 'N/A'}</span>
+                            <span style="background: rgba(255,255,255,0.1); padding:2px 4px; border-radius:3px; font-size:0.7rem;">${show.network?.name || 'Web'}</span>
+                        </div>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
         }
 
         return { init };
     })();
-    document.addEventListener('DOMContentLoaded', TVShowsPage.init);
+    document.addEventListener('DOMContentLoaded', AwThemeTV.init);
     </script>
 </body>
 </html>

@@ -207,7 +207,7 @@ const DetailPage = (() => {
                             </div>
                             <p class="detail-overview">${show.overview || ''}</p>
                             <div class="detail-actions">
-                                <button class="btn btn-primary" onclick="UI.openTrailerModal('https://vidsrc.me/embed/tv/${show.id}', true, '${(show.name||show.title).replace(/'/g, "\\'")}')">
+                                <button class="btn btn-primary" onclick="enterWatchMode('${show.id}', 'tv', '${(show.name||show.title).replace(/'/g, "\\'")}')">
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
                                     Play Show
                                 </button>
@@ -286,7 +286,7 @@ const DetailPage = (() => {
                             <p class="detail-overview">${summary}</p>
                             <div class="detail-actions">
                                 ${show.externals?.imdb ? `
-                                <button class="btn btn-primary" onclick="UI.openTrailerModal('https://vidsrc.to/embed/tv/${show.externals.imdb}', true, '${show.name.replace(/'/g, "\\'")}')">
+                                <button class="btn btn-primary" onclick="initTvmazeWatchMode('${show.id}', '${show.externals.imdb}', '${show.name.replace(/'/g, "\\'")}')">
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
                                     Play Show
                                 </button>` : ''}
@@ -584,6 +584,119 @@ const DetailPage = (() => {
         document.querySelector('.page-content').appendChild(watchW);
     }
     
+    
+    // TVMaze Specific Watch Mode wrapper
+    window.initTvmazeWatchMode = async function(tvmazeId, imdbId, displayTitle) {
+        window.scrollTo(0,0);
+        UI.showToast('Initializing Watch Player...', 'info');
+
+        const container = document.getElementById('detail-content');
+        if(container) container.style.display = 'none';
+
+        let watchW = document.getElementById('watch-mode-wrapper');
+        if(watchW) watchW.remove();
+
+        watchW = document.createElement('div');
+        watchW.id = 'watch-mode-wrapper';
+        
+        let seasonsListHTML = '';
+        let episodesHtml = '';
+        let currentSeason = 1;
+
+        try {
+            // TVMaze provides all eps at once
+            const eps = await API.TVMAZE.fetchJSON(`/shows/${tvmazeId}/episodes`);
+            // Group by season
+            const seasonsMap = {};
+            eps.forEach(e => {
+                if(!seasonsMap[e.season]) seasonsMap[e.season] = [];
+                seasonsMap[e.season].push(e);
+            });
+            
+            const validSeasons = Object.keys(seasonsMap).map(Number).sort((a,b)=>a-b);
+            
+            if (validSeasons.length > 0) {
+                currentSeason = validSeasons[0];
+                const activeEps = seasonsMap[currentSeason];
+                
+                episodesHtml = activeEps.map(e => `
+                    <div class="watch-ep-item ${e.number === 1 ? 'active' : ''}" 
+                         onclick="changeEpisode(this, ${currentSeason}, ${e.number}, '${imdbId}', 'tv')">
+                        <span class="watch-ep-num">${e.number}</span>
+                        <span class="watch-ep-title">${e.name}</span>
+                    </div>`).join('');
+
+                seasonsListHTML = validSeasons.map(s => `
+                    <div class="watch-season-card ${s === currentSeason ? 'active' : ''}"
+                         onclick="loadSeasonTvMaze(${s}, ${tvmazeId}, '${imdbId}', this)">
+                        Season ${s}
+                    </div>`).join('');
+                    
+                // Attach global season loader map for TVMaze
+                window.__tvmazeEpsMap = seasonsMap;
+            }
+        } catch(e) { console.error('TVmaze Ep fetch err', e); }
+
+        const baseUrl = `https://vidsrc.me/embed/tv/${imdbId}/${currentSeason}/1`;
+        
+        watchW.innerHTML = `
+            <div class="watch-layout-split">
+                <div class="watch-sidebar">
+                    <div class="watch-sidebar-header">
+                        <span id="watch-season-title">List of episodes: S${currentSeason}</span>
+                    </div>
+                    <div class="watch-eps-list" id="watch-eps-list">
+                        ${episodesHtml || '<div style="padding:20px;color:#888;">No episode data</div>'}
+                    </div>
+                </div>
+
+                <div class="watch-main">
+                    <div class="watch-player-wrap">
+                        <iframe id="main-player-iframe" src="${baseUrl}" frameborder="0" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+                    </div>
+                    <div class="watch-servers">
+                        <div class="server-group">
+                            <span class="server-label">Servers:</span>
+                            <button class="server-btn active" onclick="switchServer('vidsrc.me', this)">VidSrc</button>
+                            <button class="server-btn" onclick="switchServer('vidsrc.pm', this)">MegaCloud (Alt)</button>
+                            <button class="server-btn" onclick="switchServer('vidsrc.net', this)">T-Cloud (Alt)</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            ${seasonsListHTML ? `
+            <div class="watch-more-seasons">
+                <h3 style="color:var(--color-primary); margin-bottom:15px; padding-left: 20px;">More Seasons</h3>
+                <div class="watch-season-grid" id="watch-season-grid">
+                    ${seasonsListHTML}
+                </div>
+            </div>` : ''}
+            
+            <button class="btn btn-outline" style="margin: 20px;" onclick="exitWatchMode()">← Back to Details</button>
+        `;
+        
+        document.querySelector('.page-content').appendChild(watchW);
+    }
+    
+    window.loadSeasonTvMaze = function(seasonNum, tvmazeId, imdbId, element) {
+        document.querySelectorAll('.watch-season-card').forEach(e => e.classList.remove('active'));
+        element.classList.add('active');
+        document.getElementById('watch-season-title').textContent = `List of episodes: S${seasonNum}`;
+        
+        const list = document.getElementById('watch-eps-list');
+        const eps = window.__tvmazeEpsMap[seasonNum] || [];
+        
+        list.innerHTML = eps.map(e => `
+            <div class="watch-ep-item ${e.number === 1 ? 'active' : ''}" 
+                 onclick="changeEpisode(this, ${seasonNum}, ${e.number}, '${imdbId}', 'tv')">
+                <span class="watch-ep-num">${e.number}</span>
+                <span class="watch-ep-title">${e.name}</span>
+            </div>`).join('');
+        
+        list.querySelector('.watch-ep-item')?.click();
+    }
+
     window.changeEpisode = function(element, seasonNum, epNum, tmdbId, type) {
         document.querySelectorAll('.watch-ep-item').forEach(e => e.classList.remove('active'));
         element.classList.add('active');
