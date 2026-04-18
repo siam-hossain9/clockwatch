@@ -126,7 +126,7 @@ const DetailPage = (() => {
                             ${awards ? `<p style="color:var(--color-gold);margin-bottom:16px;">Awards: ${awards}</p>` : ''}
                             ${boxOffice !== 'N/A' ? `<p style="margin-bottom:16px;color:var(--color-text-muted);">Box Office: ${boxOffice}</p>` : ''}
                             <div class="detail-actions">
-                                <button class="btn btn-primary" onclick="UI.openTrailerModal('https://vidsrc.to/embed/movie/${movie.id}', true, '${movie.title.replace(/'/g, "\\'")}')">
+                                <button class="btn btn-primary" onclick="UI.openTrailerModal('https://vidsrc.me/embed/movie/${movie.id}', true, '${movie.title.replace(/'/g, "\\'")}')">
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
                                     Play Movie
                                 </button>
@@ -207,7 +207,7 @@ const DetailPage = (() => {
                             </div>
                             <p class="detail-overview">${show.overview || ''}</p>
                             <div class="detail-actions">
-                                <button class="btn btn-primary" onclick="UI.openTrailerModal('https://vidsrc.to/embed/tv/${show.id}', true, '${(show.name||show.title).replace(/'/g, "\\'")}')">
+                                <button class="btn btn-primary" onclick="UI.openTrailerModal('https://vidsrc.me/embed/tv/${show.id}', true, '${(show.name||show.title).replace(/'/g, "\\'")}')">
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
                                     Play Show
                                 </button>
@@ -483,7 +483,7 @@ const DetailPage = (() => {
             }
 
             if (match) {
-                const embedUrl = `https://vidsrc.to/embed/${type}/${match.id}`;
+                const embedUrl = `https://vidsrc.me/embed/${type}/${match.id}`;
                 const displayTitle = match.name || match.title || title;
                 UI.openTrailerModal(embedUrl, true, displayTitle);
             } else {
